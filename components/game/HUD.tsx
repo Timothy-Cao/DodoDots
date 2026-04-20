@@ -30,11 +30,12 @@ export function HUD({ title, movesUsed, optimalMoves }: { title: string; movesUs
         className="font-display"
         style={{
           color: over ? 'var(--danger)' : 'var(--cyan)',
-          fontSize: 'clamp(14px, 3.6vw, 18px)',
+          fontSize: 'clamp(12px, 3vw, 16px)',
+          letterSpacing: '0.1em',
           flex: '0 0 auto',
         }}
       >
-        {movesUsed}{over ? ` (par ${optimalMoves})` : ''}
+        MOVES · {movesUsed}{over ? `  OVER PAR ${optimalMoves}` : ''}
       </div>
     </div>
   );

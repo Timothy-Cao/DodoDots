@@ -46,7 +46,7 @@ describe('reduce/traverse', () => {
     expect(s2).toBe(s);
   });
 
-  it('fails when movesRemaining hits 0 without solving', () => {
+  it('does NOT fail when movesRemaining hits 0 without an unreachable edge', () => {
     const g: Graph = {
       nodes: [
         { id: 'a', x: 0, y: 0, count: 2, startEligible: true },
@@ -57,7 +57,8 @@ describe('reduce/traverse', () => {
     let s = initGame(g, 1);
     s = reduce(s, { type: 'latch', nodeId: 'a' });
     s = reduce(s, { type: 'traverse', nodeId: 'b' });
-    expect(s.phase).toBe('failed');
+    // movesRemaining is now 0 (or negative) but game is not failed — only unreachable edge fails
+    expect(s.phase).toBe('latched');
     expect(s.movesRemaining).toBe(0);
   });
 });

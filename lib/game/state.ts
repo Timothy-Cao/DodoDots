@@ -48,7 +48,6 @@ export function reduce(s: GameState, a: GameAction): GameState {
     case 'traverse': {
       if (s.phase !== 'latched' && s.phase !== 'tracing') return s;
       if (s.current === null) return s;
-      if (s.movesRemaining <= 0) return s;
       // Reject traverse to a node that is already done (count ≤ 0)
       const destNode = getNode(s.graph, a.nodeId);
       if (!destNode || destNode.count <= 0) return s;
@@ -63,11 +62,10 @@ export function reduce(s: GameState, a: GameAction): GameState {
           e.id === hit.edgeId ? { ...e, count: Math.max(0, e.count - 1) } : e
         ),
       };
-      const movesRemaining = Math.max(0, s.movesRemaining - 1);
+      const movesRemaining = s.movesRemaining - 1;
       const next: GameState = { ...s, graph, current: a.nodeId, movesRemaining, phase: 'latched' };
       if (isSolved(graph)) return { ...next, phase: 'won' };
       if (hasUnreachableEdge(graph)) return { ...next, phase: 'failed' };
-      if (movesRemaining === 0) return { ...next, phase: 'failed' };
       return next;
     }
     case 'reset':

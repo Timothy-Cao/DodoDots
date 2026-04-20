@@ -1,28 +1,33 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { storage } from '@/lib/storage';
+import { useGameStore } from '@/stores/gameStore';
 
 export function FirstPlayHint() {
+  const phase = useGameStore(s => s.state?.phase);
   const [show, setShow] = useState(false);
+  const dismissedRef = useRef(false);
 
   useEffect(() => {
-    if (!storage.getHasPlayed()) {
-      setShow(true);
-      const t = setTimeout(() => {
-        setShow(false);
-        storage.markHasPlayed();
-      }, 4500);
-      const onTap = () => {
-        setShow(false);
-        storage.markHasPlayed();
-      };
-      window.addEventListener('pointerdown', onTap, { once: true });
-      return () => {
-        clearTimeout(t);
-        window.removeEventListener('pointerdown', onTap);
-      };
-    }
+    if (storage.getHasPlayed()) return;
+    setShow(true);
+    const t = setTimeout(() => dismiss(), 4500);
+    return () => clearTimeout(t);
   }, []);
+
+  // Dismiss on first real latch (idle -> latched/tracing/won)
+  useEffect(() => {
+    if (phase && phase !== 'idle' && !dismissedRef.current) {
+      dismiss();
+    }
+  }, [phase]);
+
+  function dismiss() {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
+    setShow(false);
+    storage.markHasPlayed();
+  }
 
   if (!show) return null;
 

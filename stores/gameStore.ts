@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { initGame, reduce, type GameState, type GameAction } from '@/lib/game/state';
 import { getValidNeighbors } from '@/lib/graph';
 import type { Graph } from '@/lib/graph';
+import { playSfx } from '@/lib/sfx';
 
 function hapticCommit() {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -46,22 +47,42 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newHistory = [];
     }
 
+    const prevPhase = state.phase;
     const next = reduce(state, a);
-    if (next === state) return; // no-op
+
+    // No-op: play invalid feedback for failed latch/traverse attempts
+    if (next === state) {
+      if (a.type === 'latch' || a.type === 'traverse') playSfx('invalid');
+      return;
+    }
 
     let lastCommit = get().lastCommit;
 
-    if (a.type === 'traverse') {
+    if (a.type === 'latch') {
+      playSfx('latch');
+    } else if (a.type === 'traverse') {
       // Find the edge that was traversed
       const neighbors = getValidNeighbors(state.graph, state.current!);
       const hit = neighbors.find(n => n.nodeId === a.nodeId);
       if (hit) {
         lastCommit = { nodeId: a.nodeId, edgeId: hit.edgeId, at: Date.now() };
         hapticCommit();
+        // Check if destination node or edge just hit 0 (completed element)
+        const destNode = next.graph.nodes.find(n => n.id === a.nodeId);
+        const traversedEdge = next.graph.edges.find(e => e.id === hit.edgeId);
+        if (destNode?.count === 0 || traversedEdge?.count === 0) {
+          playSfx('complete');
+        } else {
+          playSfx('traverse');
+        }
       }
     } else if (a.type === 'reset') {
       lastCommit = null;
     }
+
+    // Phase transition SFX
+    if (next.phase === 'won' && prevPhase !== 'won') playSfx('win');
+    else if (next.phase === 'failed' && prevPhase !== 'failed') playSfx('fail');
 
     set({ state: next, history: newHistory, lastCommit });
   },
@@ -69,6 +90,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   undo: () => {
     const { history } = get();
     if (history.length === 0) return;
+    playSfx('undo');
     const prev = history[history.length - 1];
     const newHistory = history.slice(0, -1);
     set({ state: prev, history: newHistory, lastCommit: null });

@@ -96,6 +96,22 @@ describe('unreachable edge detection', () => {
     s = reduce(s, { type: 'latch', nodeId: 'a' }); // a: 0
     s = reduce(s, { type: 'traverse', nodeId: 'b' }); // b: 0, e1: 0. Edge e2 has count 1 but b=0 c=0 → unreachable
     expect(s.phase).toBe('failed');
+    expect(s.failedEdge).toBe('e2');
+  });
+
+  it('does not fail when movesRemaining hits 0 if the puzzle is still solvable', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 1, startEligible: false },
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    };
+    let s = initGame(g, 1);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    // All counts are 0 → phase 'won', not 'failed'
+    expect(s.phase).toBe('won');
   });
 });
 

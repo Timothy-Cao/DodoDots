@@ -50,11 +50,16 @@ export function getNode(g: Graph, id: string): GraphNode | undefined {
   return g.nodes.find(n => n.id === id);
 }
 
-export function hasUnreachableEdge(g: Graph): boolean {
-  return g.edges.some(e => {
-    if (e.count <= 0) return false;
+export function findUnreachableEdge(g: Graph): string | null {
+  for (const e of g.edges) {
+    if (e.count <= 0) continue;
     const from = getNode(g, e.from);
     const to = getNode(g, e.to);
-    return (from?.count ?? 1) <= 0 && (to?.count ?? 1) <= 0;
-  });
+    if ((from?.count ?? 1) <= 0 && (to?.count ?? 1) <= 0) return e.id;
+  }
+  return null;
+}
+
+export function hasUnreachableEdge(g: Graph): boolean {
+  return findUnreachableEdge(g) !== null;
 }

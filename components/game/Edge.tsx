@@ -35,6 +35,8 @@ export function EdgeView({
     strokeColor = 'var(--dim)';
   }
 
+  const winwave = cascadeDelay !== undefined && done;
+
   const classes = [
     'edge',
     done ? 'edge--done' : 'edge--pending',
@@ -44,6 +46,7 @@ export function EdgeView({
     failFlash && 'edge--fail-flash',
     flash && 'edge--flash',
     isFailed && 'edge--failed',
+    winwave && 'edge--winwave',
   ].filter(Boolean).join(' ');
 
   const arrowX1 = edge.direction === 'backward' ? x2 : x1;

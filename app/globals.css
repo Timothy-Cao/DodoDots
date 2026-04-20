@@ -54,18 +54,16 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .node--dim { opacity: 0.4; }
 .node--halo circle.node-halo { animation: node-pulse 1.2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
 
-/* Change 5: win cascade */
-.cascade-pulse circle { animation: cascade 600ms ease-out both; }
-.cascade-pulse line { animation: cascade-line 600ms ease-out both; }
-@keyframes cascade {
-  0% { filter: url(#bloom-bright); transform: scale(1); }
-  40% { filter: url(#bloom-bright); transform: scale(1.4); }
-  100% { transform: scale(1); }
+/* Change 5 / Change 8: win cascade */
+.cascade-pulse circle, .node--winwave circle { animation: win-wave 300ms ease-out both; transform-origin: center; transform-box: fill-box; }
+.edge--winwave line { animation: win-wave-edge 300ms ease-out both; }
+@keyframes win-wave {
+  0%,100% { filter: url(#bloom-bright); }
+  50% { filter: url(#bloom-bright); transform: scale(1.15); transform-origin: center; transform-box: fill-box; }
 }
-@keyframes cascade-line {
-  0% { stroke-width: 0.5; filter: url(#bloom-bright); }
-  40% { stroke-width: 1.2; filter: url(#bloom-bright); }
-  100% { stroke-width: 0.5; }
+@keyframes win-wave-edge {
+  0%,100% { stroke-width: 0.5; }
+  50% { stroke-width: 1.2; }
 }
 
 /* Change 3: commit pulse */

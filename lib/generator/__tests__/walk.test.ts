@@ -14,9 +14,23 @@ describe('simulateWalk', () => {
     }
     for (const v of Object.values(deg)) expect(v).toBeLessThanOrEqual(4);
   });
-  it('steps length equals requested length', () => {
+  it('steps length is at most requested length', () => {
     const pts = placeNodes(createRng('c'), 6);
     const walk = simulateWalk(createRng('d'), pts, 15);
-    expect(walk.steps.length).toBe(15);
+    expect(walk.steps.length).toBeLessThanOrEqual(15);
+    expect(walk.steps.length).toBeGreaterThan(0);
+  });
+  it('caps node and edge visits at 2', () => {
+    const pts = placeNodes(createRng('cap'), 8);
+    const walk = simulateWalk(createRng('cap2'), pts, 30);
+    const nodeVisits = new Array(pts.length).fill(0);
+    const edgeVisits = new Map<string, number>();
+    nodeVisits[walk.start]++;
+    for (const s of walk.steps) {
+      nodeVisits[s.to]++;
+      edgeVisits.set(s.edgeKey, (edgeVisits.get(s.edgeKey) ?? 0) + 1);
+    }
+    for (const v of nodeVisits) expect(v).toBeLessThanOrEqual(2);
+    for (const v of edgeVisits.values()) expect(v).toBeLessThanOrEqual(2);
   });
 });

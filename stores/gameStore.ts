@@ -4,6 +4,12 @@ import { initGame, reduce, type GameState, type GameAction } from '@/lib/game/st
 import { getValidNeighbors } from '@/lib/graph';
 import type { Graph } from '@/lib/graph';
 
+function hapticCommit() {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(8); } catch {}
+  }
+}
+
 type LastCommit = { nodeId: string; edgeId: string; at: number };
 
 type GameStore = {
@@ -14,6 +20,7 @@ type GameStore = {
   dispatch: (a: GameAction) => void;
   undo: () => void;
   clearLastCommit: () => void;
+  resetGame: () => void;
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -50,6 +57,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const hit = neighbors.find(n => n.nodeId === a.nodeId);
       if (hit) {
         lastCommit = { nodeId: a.nodeId, edgeId: hit.edgeId, at: Date.now() };
+        hapticCommit();
       }
     } else if (a.type === 'reset') {
       lastCommit = null;
@@ -67,4 +75,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   clearLastCommit: () => set({ lastCommit: null }),
+
+  resetGame: () => {
+    const { state } = get();
+    if (!state) return;
+    const next = reduce(state, { type: 'reset' });
+    set({ state: next, history: [], lastCommit: null });
+  },
 }));

@@ -53,11 +53,13 @@ export function simulateWalk(
     if (allCandidatesEmpty) break; // no valid moves within cap — stop early
 
     let next: number;
-    const useExisting = rng() < 0.7 && existingCandidates.length > 0;
-    if (useExisting) {
+    const preferExisting = rng() < 0.7;
+    if (preferExisting && existingCandidates.length > 0) {
+      // Use an existing capped-compliant edge
       next = existingCandidates[Math.floor(rng() * existingCandidates.length)];
       if (prev !== -1 && existingCandidates.includes(prev) && rng() < 0.15) next = prev;
     } else if (newCandidates.length > 0) {
+      // Create a new edge weighted by proximity
       const total = newCandidates.reduce((s, c) => s + c.w, 0);
       let r = rng() * total;
       next = newCandidates[0].id;
@@ -74,21 +76,27 @@ export function simulateWalk(
         degree[next]++;
       }
     } else {
-      // useExisting was chosen but no existing caps-compliant neighbor; pick from new
-      const total = newCandidates.reduce((s, c) => s + c.w, 0);
-      let r = rng() * total;
-      next = newCandidates[0].id;
-      for (const c of newCandidates) {
-        r -= c.w;
-        if (r <= 0) { next = c.id; break; }
-      }
-      const k = edgeKey(cur, next);
-      if (!edges.has(k)) {
-        edges.set(k, { a: cur, b: next });
-        adj[cur].push(next);
-        adj[next].push(cur);
-        degree[cur]++;
-        degree[next]++;
+      // Either: preferExisting=true but existingCandidates empty → fall back to new
+      // Or: preferExisting=false but newCandidates empty → fall back to existing
+      if (newCandidates.length > 0) {
+        const total = newCandidates.reduce((s, c) => s + c.w, 0);
+        let r = rng() * total;
+        next = newCandidates[0].id;
+        for (const c of newCandidates) {
+          r -= c.w;
+          if (r <= 0) { next = c.id; break; }
+        }
+        const k = edgeKey(cur, next);
+        if (!edges.has(k)) {
+          edges.set(k, { a: cur, b: next });
+          adj[cur].push(next);
+          adj[next].push(cur);
+          degree[cur]++;
+          degree[next]++;
+        }
+      } else {
+        // Only existingCandidates remain
+        next = existingCandidates[Math.floor(rng() * existingCandidates.length)];
       }
     }
 

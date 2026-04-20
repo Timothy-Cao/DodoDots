@@ -68,9 +68,9 @@ export function NodeView({
     : undefined;
 
   // Pip rendering: determine pip counts
+  // filledPips = consumed pips (shown green); remaining = grey
   const totalPips = initialCount ?? node.count;
   const filledPips = done ? totalPips : (isVisited ? (totalPips - node.count) : 0);
-  const outlinePips = done ? 0 : node.count;
   const showPips = totalPips <= 2;
 
   // Cursor logic: pointer for clickable nodes, default for locked/unreachable
@@ -144,15 +144,13 @@ export function NodeView({
           pointerEvents="none"
         />
       )}
-      {/* Pips for count 1 or 2 */}
+      {/* Pips for count 1 or 2 — always filled; green=consumed, grey=remaining */}
       {!done && showPips && totalPips === 1 && (
         <circle
           data-testid="pip"
-          cx={cx} cy={cy} r={0.6}
-          fill={filledPips > 0 ? 'var(--neon-green)' : 'none'}
-          stroke={outlinePips > 0 ? 'var(--cyan)' : 'var(--neon-green)'}
-          strokeWidth={0.15}
-          filter="url(#bloom-bright)"
+          cx={cx} cy={cy} r={0.85}
+          fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
+          filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
           pointerEvents="none"
         />
       )}
@@ -161,21 +159,17 @@ export function NodeView({
           {/* Left pip */}
           <circle
             data-testid="pip"
-            cx={cx - 1} cy={cy} r={0.6}
-            fill={filledPips >= 1 ? 'var(--neon-green)' : 'none'}
-            stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
-            strokeWidth={0.15}
-            filter="url(#bloom-bright)"
+            cx={cx - 1} cy={cy} r={0.7}
+            fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
+            filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
             pointerEvents="none"
           />
           {/* Right pip */}
           <circle
             data-testid="pip"
-            cx={cx + 1} cy={cy} r={0.6}
-            fill={filledPips >= 2 ? 'var(--neon-green)' : 'none'}
-            stroke={filledPips >= 2 ? 'none' : 'var(--cyan)'}
-            strokeWidth={0.15}
-            filter="url(#bloom-bright)"
+            cx={cx + 1} cy={cy} r={0.7}
+            fill={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
+            filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
             pointerEvents="none"
           />
         </>

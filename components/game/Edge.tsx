@@ -58,14 +58,20 @@ export function EdgeView({
   const arrowX2 = edge.direction === 'backward' ? x1 : x2;
   const arrowY2 = edge.direction === 'backward' ? y1 : y2;
 
-  // Pip rendering
+  // Tick mark rendering (replaces circle pips on edges)
   const totalPips = initialCount ?? edge.count;
   const filledPips = done ? totalPips : (isVisited ? (totalPips - edge.count) : 0);
   const showPips = !done && totalPips <= 2;
 
-  // Positions along edge for pips
+  // Positions along edge for ticks
   const p35x = x1 + (x2 - x1) * 0.35, p35y = y1 + (y2 - y1) * 0.35;
   const p65x = x1 + (x2 - x1) * 0.65, p65y = y1 + (y2 - y1) * 0.65;
+
+  // Perpendicular unit vector for tick marks
+  const dx = x2 - x1, dy = y2 - y1;
+  const edgeLen = Math.hypot(dx, dy) || 1;
+  const px = -dy / edgeLen, py = dx / edgeLen; // perpendicular unit vector
+  const halfTick = 0.8; // half of tick length 1.6
 
   const cascadeStyle = cascadeDelay !== undefined && done
     ? { animationDelay: `${cascadeDelay * 80}ms` }
@@ -86,59 +92,35 @@ export function EdgeView({
           fill={done ? 'var(--neon-green)' : (isFailed ? 'var(--danger)' : 'var(--dim)')}
         />
       )}
-      {/* Pips for pending edges count 1 or 2 */}
+      {/* Perpendicular tick marks for pending edges (count 1 or 2) */}
+      {/* Done state: no ticks — bright green edge conveys done */}
       {showPips && totalPips === 1 && (
-        <circle
+        <line
           data-testid="pip"
-          cx={mx} cy={my} r={0.6}
-          fill={filledPips >= 1 ? 'var(--neon-green)' : 'none'}
-          stroke={filledPips >= 1 ? 'none' : 'var(--dim)'}
-          strokeWidth={0.15}
-          filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          x1={mx - px * halfTick} y1={my - py * halfTick}
+          x2={mx + px * halfTick} y2={my + py * halfTick}
+          stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
+          strokeWidth={0.45}
+          filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
       )}
       {showPips && totalPips === 2 && (
         <>
-          <circle
+          <line
             data-testid="pip"
-            cx={p35x} cy={p35y} r={0.6}
-            fill={filledPips >= 1 ? 'var(--neon-green)' : 'none'}
-            stroke={filledPips >= 1 ? 'none' : 'var(--dim)'}
-            strokeWidth={0.15}
-            filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+            x1={p35x - px * halfTick} y1={p35y - py * halfTick}
+            x2={p35x + px * halfTick} y2={p35y + py * halfTick}
+            stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
+            strokeWidth={0.45}
+            filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
           />
-          <circle
+          <line
             data-testid="pip"
-            cx={p65x} cy={p65y} r={0.6}
-            fill={filledPips >= 2 ? 'var(--neon-green)' : 'none'}
-            stroke={filledPips >= 2 ? 'none' : 'var(--dim)'}
-            strokeWidth={0.15}
-            filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
-          />
-        </>
-      )}
-      {/* Done state pips */}
-      {done && totalPips === 1 && (
-        <circle
-          data-testid="pip"
-          cx={mx} cy={my} r={0.6}
-          fill="var(--neon-green)"
-          filter="url(#bloom-bright)"
-        />
-      )}
-      {done && totalPips === 2 && (
-        <>
-          <circle
-            data-testid="pip"
-            cx={p35x} cy={p35y} r={0.6}
-            fill="var(--neon-green)"
-            filter="url(#bloom-bright)"
-          />
-          <circle
-            data-testid="pip"
-            cx={p65x} cy={p65y} r={0.6}
-            fill="var(--neon-green)"
-            filter="url(#bloom-bright)"
+            x1={p65x - px * halfTick} y1={p65y - py * halfTick}
+            x2={p65x + px * halfTick} y2={p65y + py * halfTick}
+            stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
+            strokeWidth={0.45}
+            filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
           />
         </>
       )}

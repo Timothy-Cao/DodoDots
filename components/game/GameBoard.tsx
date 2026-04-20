@@ -141,12 +141,6 @@ export function GameBoard({
         className="game-svg"
         onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
         <BloomDefs />
-        <defs>
-          <pattern id="tron-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="var(--cyan)" strokeWidth="0.1" opacity="0.15" />
-          </pattern>
-        </defs>
-        <rect x="0" y="0" width={vbW} height={vbH} fill="url(#tron-grid)" />
         {graph.edges.map(e => {
           const from = getNode(graph, e.from);
           const to = getNode(graph, e.to);

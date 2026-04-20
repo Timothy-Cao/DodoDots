@@ -14,10 +14,16 @@ html {
   -webkit-text-size-adjust: 100%;
   touch-action: manipulation;
   overscroll-behavior: none;
+  /* Subtle CSS grid that extends across the full viewport (including HUD chrome strips) */
+  background-color: var(--bg-deep);
+  background-image:
+    linear-gradient(to right, rgba(57, 208, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(57, 208, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0;
 }
 
 html, body {
-  background: var(--bg-deep);
   color: #c9d3e3;
   margin: 0;
   font-family: var(--font-body), system-ui, sans-serif;
@@ -25,6 +31,7 @@ html, body {
 }
 
 body {
+  background: transparent;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;

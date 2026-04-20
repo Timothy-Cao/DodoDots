@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BloomDefs } from './BloomDefs';
 import { NodeView, type NodeVisualState } from './Node';
 import { EdgeView } from './Edge';
@@ -9,9 +9,12 @@ import { getNode, getValidNeighbors } from '@/lib/graph';
 
 export type PulseEntry = { id: string; x: number; y: number; color: string };
 
+type LastCommit = { nodeId: string; edgeId: string; at: number } | null;
+
 export function GameBoard({
   graph, current, phase, onNodeClick, pulses = [], onPulseDone,
   recentNodes, recentEdges, failEdgeId,
+  initialGraph, lastCommit, failedEdge, onCommitAnimationDone,
 }: {
   graph: Graph;
   current: string | null;
@@ -22,6 +25,10 @@ export function GameBoard({
   recentNodes?: Set<string>;
   recentEdges?: Set<string>;
   failEdgeId?: string | null;
+  initialGraph?: Graph;
+  lastCommit?: LastCommit;
+  failedEdge?: string | null;
+  onCommitAnimationDone?: () => void;
 }) {
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
 
@@ -35,6 +42,14 @@ export function GameBoard({
     setMouse({ x: p.x / 100, y: p.y / 100 });
   };
   const onMouseLeave = () => setMouse(null);
+
+  // Clear lastCommit after animation window
+  useEffect(() => {
+    if (lastCommit && onCommitAnimationDone) {
+      const t = setTimeout(onCommitAnimationDone, 200);
+      return () => clearTimeout(t);
+    }
+  }, [lastCommit, onCommitAnimationDone]);
 
   // Eligible starts while idle; valid targets while latched (filtered to unlocked)
   const eligibleStarts = new Set(
@@ -63,18 +78,15 @@ export function GameBoard({
       }
       snapTargetId = best?.id ?? null;
     } else if (current && phase === 'latched' && validTargets.size > 0) {
-      const curNode = getNode(graph, current);
-      if (curNode) {
-        let best: { nodeId: string; edgeId: string; d: number } | null = null;
-        for (const { nodeId, edgeId } of getValidNeighbors(graph, current)) {
-          const n = getNode(graph, nodeId);
-          if (!n || n.count <= 0) continue;
-          const d = Math.hypot(mouse.x - n.x, mouse.y - n.y);
-          if (!best || d < best.d) best = { nodeId, edgeId, d };
-        }
-        snapTargetId = best?.nodeId ?? null;
-        snapEdgeId = best?.edgeId ?? null;
+      let best: { nodeId: string; edgeId: string; d: number } | null = null;
+      for (const { nodeId, edgeId } of getValidNeighbors(graph, current)) {
+        const n = getNode(graph, nodeId);
+        if (!n || n.count <= 0) continue;
+        const d = Math.hypot(mouse.x - n.x, mouse.y - n.y);
+        if (!best || d < best.d) best = { nodeId, edgeId, d };
       }
+      snapTargetId = best?.nodeId ?? null;
+      snapEdgeId = best?.edgeId ?? null;
     }
   }
 
@@ -119,9 +131,21 @@ export function GameBoard({
         const dFrom = cascadeDistances.get(e.from) ?? 0;
         const dTo = cascadeDistances.get(e.to) ?? 0;
         const cascadeDelay = phase === 'won' ? Math.max(dFrom, dTo) : undefined;
+
+        // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
+        const initialEdge = initialGraph?.edges.find(ie => ie.id === e.id);
+        const isEdgeVisited = initialEdge !== undefined && initialEdge.count > e.count && e.count > 0;
+        const flash = !!(lastCommit && e.id === lastCommit.edgeId);
+        const isFailed = e.id === (failedEdge ?? failEdgeId ?? null);
+
         return (
           <EdgeView key={e.id} edge={e} from={from} to={to} snap={snap}
-            recent={recent} cascadeDelay={cascadeDelay} failFlash={failFlash} />
+            recent={recent} cascadeDelay={cascadeDelay} failFlash={failFlash}
+            isVisited={isEdgeVisited}
+            flash={flash}
+            isFailed={isFailed}
+            initialCount={initialEdge?.count ?? e.count}
+          />
         );
       })}
       {graph.nodes.map(n => {
@@ -131,11 +155,29 @@ export function GameBoard({
         else if (eligibleStarts.has(n.id)) state = 'startEligible';
         else if (validTargets.has(n.id)) state = 'validTarget';
         const recent = recentNodes?.has(n.id);
-        const dim = phase === 'idle' && state !== 'startEligible' && n.count > 0;
         const cascadeDelay = phase === 'won' ? (cascadeDistances.get(n.id) ?? 0) : undefined;
+
+        // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
+        const initialNode = initialGraph?.nodes.find(in_ => in_.id === n.id);
+        const isNodeVisited = initialNode !== undefined && initialNode.count > n.count && n.count > 0;
+
+        // Idle state hierarchy
+        const isStartableInIdle = phase === 'idle' && n.startEligible && n.count > 0;
+        const dimInIdle = phase === 'idle' && !isStartableInIdle && n.count > 0;
+
+        // Commit pulse
+        const pulse = !!(lastCommit && n.id === lastCommit.nodeId);
+
         return (
           <NodeView key={n.id} node={n} state={state} onClick={onNodeClick}
-            recent={recent} dim={dim} cascadeDelay={cascadeDelay} />
+            recent={recent}
+            cascadeDelay={cascadeDelay}
+            isVisited={isNodeVisited}
+            isStartableInIdle={isStartableInIdle}
+            dimInIdle={dimInIdle}
+            pulse={pulse}
+            initialCount={initialNode?.count ?? n.count}
+          />
         );
       })}
       {pulses.map(p => (

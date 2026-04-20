@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-deep: #05070d;
+  --grid: #0f1a2b;
+  --dim: #6a7a8f;
+  --neon-green: #39ff8e;
+  --danger: #ff3b5c;
+  --cyan: #39d0ff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  background: var(--bg-deep);
+  color: #c9d3e3;
+  margin: 0;
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+.font-display { font-family: var(--font-display), system-ui; letter-spacing: 0.04em; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.node--pulse circle { animation: node-pulse 1.2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes node-pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
 }
+.node--target circle { stroke: var(--cyan); stroke-width: 0.3; }
+.node--current circle { stroke: var(--neon-green); stroke-width: 0.3; }
+
+button {
+  background: transparent;
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  padding: 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+}
+button:hover { background: rgba(57,208,255,0.1); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }

@@ -1,0 +1,19 @@
+{
+  "id": "03-revisit",
+  "title": "Visit twice",
+  "caption": "Two pips means you must pass through twice.",
+  "maxMoves": 4,
+  "graph": {
+    "nodes": [
+      { "id": "a", "x": 0.25, "y": 0.5, "count": 1, "startEligible": true },
+      { "id": "b", "x": 0.5, "y": 0.5, "count": 2, "startEligible": false },
+      { "id": "c", "x": 0.75, "y": 0.35, "count": 1, "startEligible": false },
+      { "id": "d", "x": 0.75, "y": 0.65, "count": 1, "startEligible": false }
+    ],
+    "edges": [
+      { "id": "e1", "from": "a", "to": "b", "count": 1, "direction": "bi" },
+      { "id": "e2", "from": "b", "to": "c", "count": 1, "direction": "bi" },
+      { "id": "e3", "from": "b", "to": "d", "count": 1, "direction": "bi" }
+    ]
+  }
+}

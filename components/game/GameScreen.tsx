@@ -22,7 +22,7 @@ export function GameScreen({
   menuHref?: string;
 }) {
   const router = useRouter();
-  const { state, load, dispatch, undo, recentNodes, recentEdges } = useGameStore();
+  const { state, load, dispatch, undo, lastCommit, clearLastCommit } = useGameStore();
 
   const [pulses, setPulses] = useState<PulseEntry[]>([]);
   const [showWinOverlay, setShowWinOverlay] = useState(false);
@@ -48,16 +48,15 @@ export function GameScreen({
   useEffect(() => {
     if (!state) return;
     if (state.phase === 'won') {
-      const t = setTimeout(() => setShowWinOverlay(true), 800);
+      const t = setTimeout(() => setShowWinOverlay(true), 600);
       return () => clearTimeout(t);
     }
     if (state.phase === 'failed') {
-      // Immediate for unreachable edge (after flash animation)
-      const delay = state.failReason?.type === 'unreachable_edge' ? 800 : 0;
-      const t = setTimeout(() => setShowFailOverlay(true), delay);
+      // Delay so the failed-edge red flash can play first (800ms)
+      const t = setTimeout(() => setShowFailOverlay(true), 800);
       return () => clearTimeout(t);
     }
-  }, [state?.phase, state?.failReason]);
+  }, [state?.phase, state?.failedEdge]);
 
   const removePulse = useCallback((id: string) => {
     setPulses(prev => prev.filter(p => p.id !== id));
@@ -94,11 +93,11 @@ export function GameScreen({
     }
   };
 
-  const failEdgeId = state.failReason?.type === 'unreachable_edge' ? state.failReason.edgeId : null;
+  const movesUsed = state.maxMoves - state.movesRemaining;
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
-      <HUD title={title} movesRemaining={state.movesRemaining} maxMoves={state.maxMoves} />
+      <HUD title={title} movesUsed={movesUsed} optimalMoves={state.maxMoves} />
       <GameBoard
         graph={state.graph}
         current={state.current}
@@ -106,11 +105,18 @@ export function GameScreen({
         onNodeClick={handleNode}
         pulses={pulses}
         onPulseDone={removePulse}
-        recentNodes={new Set(recentNodes)}
-        recentEdges={new Set(recentEdges)}
-        failEdgeId={failEdgeId}
+        initialGraph={state.initialGraph}
+        lastCommit={lastCommit}
+        failedEdge={state.failedEdge}
+        onCommitAnimationDone={clearLastCommit}
       />
-      {showWinOverlay && state.phase === 'won' && <WinOverlay onMenu={() => router.push(menuHref)} />}
+      {showWinOverlay && state.phase === 'won' && (
+        <WinOverlay
+          movesUsed={movesUsed}
+          optimalMoves={state.maxMoves}
+          onMenu={() => router.push(menuHref)}
+        />
+      )}
       {showFailOverlay && state.phase === 'failed' && (
         <FailOverlay
           onRetry={() => { dispatch({ type: 'reset' }); setShowWinOverlay(false); setShowFailOverlay(false); }}

@@ -1,5 +1,5 @@
 'use client';
-import type { GraphNode } from '@/lib/graph';
+import type { GraphNode, ViewBoxDims } from '@/lib/graph';
 
 export type NodeVisualState = 'idle' | 'startEligible' | 'current' | 'validTarget' | 'snap';
 
@@ -14,6 +14,7 @@ export function NodeView({
   onClick,
   recent,
   cascadeDelay,
+  viewBox = { w: 100, h: 100 },
 }: {
   node: GraphNode;
   state: NodeVisualState;
@@ -25,11 +26,12 @@ export function NodeView({
   initialCount?: number;
   recent?: boolean;
   cascadeDelay?: number;
+  viewBox?: ViewBoxDims;
 }) {
   const done = node.count <= 0;
   const snapActive = state === 'snap';
-  const cx = node.x * 100;
-  const cy = node.y * 100;
+  const cx = node.x * viewBox.w;
+  const cy = node.y * viewBox.h;
 
   // Determine fill and filter based on state
   let fill: string;

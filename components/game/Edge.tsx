@@ -1,8 +1,9 @@
-import type { GraphEdge, GraphNode } from '@/lib/graph';
+import type { GraphEdge, GraphNode, ViewBoxDims } from '@/lib/graph';
 
 export function EdgeView({
   edge, from, to, snap = false, recent, cascadeDelay, failFlash,
   isVisited, flash, isFailed, initialCount,
+  viewBox = { w: 100, h: 100 },
 }: {
   edge: GraphEdge;
   from: GraphNode;
@@ -15,10 +16,11 @@ export function EdgeView({
   flash?: boolean;
   isFailed?: boolean;
   initialCount?: number;
+  viewBox?: ViewBoxDims;
 }) {
   const done = edge.count <= 0;
-  const x1 = from.x * 100, y1 = from.y * 100;
-  const x2 = to.x * 100, y2 = to.y * 100;
+  const x1 = from.x * viewBox.w, y1 = from.y * viewBox.h;
+  const x2 = to.x * viewBox.w, y2 = to.y * viewBox.h;
   const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
   const directed = edge.direction !== 'bi';
   const bright = done || snap;

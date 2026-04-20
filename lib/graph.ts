@@ -1,5 +1,8 @@
 export type Direction = 'bi' | 'forward' | 'backward';
 
+/** Dimensions of the SVG viewBox (in viewBox units). Nodes have x,y in [0,1]. */
+export type ViewBoxDims = { w: number; h: number };
+
 export type GraphNode = {
   id: string;
   x: number;

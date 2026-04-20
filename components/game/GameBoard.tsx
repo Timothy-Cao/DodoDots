@@ -1,10 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BloomDefs } from './BloomDefs';
 import { NodeView, type NodeVisualState } from './Node';
 import { EdgeView } from './Edge';
 import { CommitPulse } from './CommitPulse';
-import type { Graph } from '@/lib/graph';
+import type { Graph, ViewBoxDims } from '@/lib/graph';
 import { getNode, getValidNeighbors } from '@/lib/graph';
 
 export type PulseEntry = { id: string; x: number; y: number; color: string };
@@ -31,6 +31,30 @@ export function GameBoard({
   onCommitAnimationDone?: () => void;
 }) {
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [vbDims, setVbDims] = useState<ViewBoxDims>({ w: 100, h: 100 });
+
+  // Track container size so viewBox matches aspect ratio (fills play area on any screen shape)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const { width, height } = el.getBoundingClientRect();
+      if (width <= 0 || height <= 0) return;
+      const aspect = width / height;
+      if (aspect >= 1) {
+        setVbDims({ w: 100 * aspect, h: 100 });
+      } else {
+        setVbDims({ w: 100, h: 100 / aspect });
+      }
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const { w: vbW, h: vbH } = vbDims;
 
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
     if (e.pointerType === 'touch') return; // no hover preview on touch — fingers occlude
@@ -40,7 +64,7 @@ export function GameBoard({
     const ctm = svg.getScreenCTM();
     if (!ctm) return;
     const p = pt.matrixTransform(ctm.inverse());
-    setMouse({ x: p.x / 100, y: p.y / 100 });
+    setMouse({ x: p.x / vbW, y: p.y / vbH });
   };
   const onPointerLeave = () => setMouse(null);
 
@@ -112,80 +136,86 @@ export function GameBoard({
   }
 
   return (
-    <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"
-      className="game-svg"
-      onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
-      <BloomDefs />
-      <defs>
-        <pattern id="tron-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="var(--cyan)" strokeWidth="0.1" opacity="0.15" />
-        </pattern>
-      </defs>
-      <rect x="0" y="0" width="100" height="100" fill="url(#tron-grid)" />
-      {graph.edges.map(e => {
-        const from = getNode(graph, e.from);
-        const to = getNode(graph, e.to);
-        if (!from || !to) return null;
-        const snap = e.id === snapEdgeId;
-        const recent = recentEdges?.has(e.id);
-        const failFlash = failEdgeId === e.id;
-        // cascade delay: max of endpoint distances
-        const dFrom = cascadeDistances.get(e.from) ?? 0;
-        const dTo = cascadeDistances.get(e.to) ?? 0;
-        const cascadeDelay = phase === 'won' ? Math.max(dFrom, dTo) : undefined;
+    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+      <svg viewBox={`0 0 ${vbW} ${vbH}`} width="100%" height="100%" preserveAspectRatio="none"
+        className="game-svg"
+        onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
+        <BloomDefs />
+        <defs>
+          <pattern id="tron-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="var(--cyan)" strokeWidth="0.1" opacity="0.15" />
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width={vbW} height={vbH} fill="url(#tron-grid)" />
+        {graph.edges.map(e => {
+          const from = getNode(graph, e.from);
+          const to = getNode(graph, e.to);
+          if (!from || !to) return null;
+          const snap = e.id === snapEdgeId;
+          const recent = recentEdges?.has(e.id);
+          const failFlash = failEdgeId === e.id;
+          // cascade delay: max of endpoint distances
+          const dFrom = cascadeDistances.get(e.from) ?? 0;
+          const dTo = cascadeDistances.get(e.to) ?? 0;
+          const cascadeDelay = phase === 'won' ? Math.max(dFrom, dTo) : undefined;
 
-        // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
-        const initialEdge = initialGraph?.edges.find(ie => ie.id === e.id);
-        const isEdgeVisited = initialEdge !== undefined && initialEdge.count > e.count && e.count > 0;
-        const flash = !!(lastCommit && e.id === lastCommit.edgeId);
-        const isFailed = e.id === (failedEdge ?? failEdgeId ?? null);
+          // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
+          const initialEdge = initialGraph?.edges.find(ie => ie.id === e.id);
+          const isEdgeVisited = initialEdge !== undefined && initialEdge.count > e.count && e.count > 0;
+          const flash = !!(lastCommit && e.id === lastCommit.edgeId);
+          const isFailed = e.id === (failedEdge ?? failEdgeId ?? null);
 
-        return (
-          <EdgeView key={e.id} edge={e} from={from} to={to} snap={snap}
-            recent={recent} cascadeDelay={cascadeDelay} failFlash={failFlash}
-            isVisited={isEdgeVisited}
-            flash={flash}
-            isFailed={isFailed}
-            initialCount={initialEdge?.count ?? e.count}
+          return (
+            <EdgeView key={e.id} edge={e} from={from} to={to} snap={snap}
+              recent={recent} cascadeDelay={cascadeDelay} failFlash={failFlash}
+              isVisited={isEdgeVisited}
+              flash={flash}
+              isFailed={isFailed}
+              initialCount={initialEdge?.count ?? e.count}
+              viewBox={vbDims}
+            />
+          );
+        })}
+        {graph.nodes.map(n => {
+          let state: NodeVisualState = 'idle';
+          if (n.id === current) state = 'current';
+          else if (n.id === snapTargetId) state = 'snap';
+          else if (eligibleStarts.has(n.id)) state = 'startEligible';
+          else if (validTargets.has(n.id)) state = 'validTarget';
+          const recent = recentNodes?.has(n.id);
+          const cascadeDelay = phase === 'won' ? (cascadeDistances.get(n.id) ?? 0) : undefined;
+
+          // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
+          const initialNode = initialGraph?.nodes.find(in_ => in_.id === n.id);
+          const isNodeVisited = initialNode !== undefined && initialNode.count > n.count && n.count > 0;
+
+          // Idle state hierarchy
+          const isStartableInIdle = phase === 'idle' && n.startEligible && n.count > 0;
+          const dimInIdle = phase === 'idle' && !isStartableInIdle && n.count > 0;
+
+          // Commit pulse
+          const pulse = !!(lastCommit && n.id === lastCommit.nodeId);
+
+          return (
+            <NodeView key={n.id} node={n} state={state} onClick={onNodeClick}
+              recent={recent}
+              cascadeDelay={cascadeDelay}
+              isVisited={isNodeVisited}
+              isStartableInIdle={isStartableInIdle}
+              dimInIdle={dimInIdle}
+              pulse={pulse}
+              initialCount={initialNode?.count ?? n.count}
+              viewBox={vbDims}
+            />
+          );
+        })}
+        {pulses.map(p => (
+          <CommitPulse key={p.id} x={p.x} y={p.y} color={p.color}
+            onDone={() => onPulseDone?.(p.id)}
+            viewBox={vbDims}
           />
-        );
-      })}
-      {graph.nodes.map(n => {
-        let state: NodeVisualState = 'idle';
-        if (n.id === current) state = 'current';
-        else if (n.id === snapTargetId) state = 'snap';
-        else if (eligibleStarts.has(n.id)) state = 'startEligible';
-        else if (validTargets.has(n.id)) state = 'validTarget';
-        const recent = recentNodes?.has(n.id);
-        const cascadeDelay = phase === 'won' ? (cascadeDistances.get(n.id) ?? 0) : undefined;
-
-        // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
-        const initialNode = initialGraph?.nodes.find(in_ => in_.id === n.id);
-        const isNodeVisited = initialNode !== undefined && initialNode.count > n.count && n.count > 0;
-
-        // Idle state hierarchy
-        const isStartableInIdle = phase === 'idle' && n.startEligible && n.count > 0;
-        const dimInIdle = phase === 'idle' && !isStartableInIdle && n.count > 0;
-
-        // Commit pulse
-        const pulse = !!(lastCommit && n.id === lastCommit.nodeId);
-
-        return (
-          <NodeView key={n.id} node={n} state={state} onClick={onNodeClick}
-            recent={recent}
-            cascadeDelay={cascadeDelay}
-            isVisited={isNodeVisited}
-            isStartableInIdle={isStartableInIdle}
-            dimInIdle={dimInIdle}
-            pulse={pulse}
-            initialCount={initialNode?.count ?? n.count}
-          />
-        );
-      })}
-      {pulses.map(p => (
-        <CommitPulse key={p.id} x={p.x} y={p.y} color={p.color}
-          onDone={() => onPulseDone?.(p.id)} />
-      ))}
-    </svg>
+        ))}
+      </svg>
+    </div>
   );
 }

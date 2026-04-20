@@ -1,6 +1,16 @@
 import type { GraphEdge, GraphNode } from '@/lib/graph';
 
-export function EdgeView({ edge, from, to, snap = false }: { edge: GraphEdge; from: GraphNode; to: GraphNode; snap?: boolean }) {
+export function EdgeView({
+  edge, from, to, snap = false, recent, cascadeDelay, failFlash,
+}: {
+  edge: GraphEdge;
+  from: GraphNode;
+  to: GraphNode;
+  snap?: boolean;
+  recent?: boolean;
+  cascadeDelay?: number;
+  failFlash?: boolean;
+}) {
   const done = edge.count <= 0;
   const x1 = from.x * 100, y1 = from.y * 100;
   const x2 = to.x * 100, y2 = to.y * 100;
@@ -12,13 +22,26 @@ export function EdgeView({ edge, from, to, snap = false }: { edge: GraphEdge; fr
     done ? 'edge--done' : 'edge--pending',
     directed && 'edge--directed',
     snap && 'edge--snap',
+    recent && !done && 'edge--recent',
+    failFlash && 'edge--fail-flash',
   ].filter(Boolean).join(' ');
   const arrowX1 = edge.direction === 'backward' ? x2 : x1;
   const arrowY1 = edge.direction === 'backward' ? y2 : y1;
   const arrowX2 = edge.direction === 'backward' ? x1 : x2;
   const arrowY2 = edge.direction === 'backward' ? y1 : y2;
+
+  const pipColor = done ? 'var(--neon-green)' : 'var(--dim)';
+
+  // Positions along edge for pips
+  const p35x = x1 + (x2 - x1) * 0.35, p35y = y1 + (y2 - y1) * 0.35;
+  const p65x = x1 + (x2 - x1) * 0.65, p65y = y1 + (y2 - y1) * 0.65;
+
+  const cascadeStyle = cascadeDelay !== undefined && done
+    ? { animationDelay: `${cascadeDelay * 80}ms` }
+    : undefined;
+
   return (
-    <g className={classes}>
+    <g className={classes} style={cascadeStyle}>
       <line
         x1={x1} y1={y1} x2={x2} y2={y2}
         stroke={bright ? 'var(--neon-green)' : 'var(--dim)'}
@@ -31,11 +54,29 @@ export function EdgeView({ edge, from, to, snap = false }: { edge: GraphEdge; fr
           fill={done ? 'var(--neon-green)' : 'var(--dim)'}
         />
       )}
+      {edge.count === 1 && (
+        <circle
+          data-testid="pip"
+          cx={mx} cy={my} r={0.6}
+          fill={pipColor}
+          filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        />
+      )}
       {edge.count >= 2 && (
-        <text x={mx} y={my - 1.5} textAnchor="middle" className="font-display"
-          fontSize={2} fill={done ? 'var(--neon-green)' : 'var(--dim)'}>
-          {edge.count}
-        </text>
+        <>
+          <circle
+            data-testid="pip"
+            cx={p35x} cy={p35y} r={0.6}
+            fill={pipColor}
+            filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          />
+          <circle
+            data-testid="pip"
+            cx={p65x} cy={p65y} r={0.6}
+            fill={pipColor}
+            filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          />
+        </>
       )}
     </g>
   );

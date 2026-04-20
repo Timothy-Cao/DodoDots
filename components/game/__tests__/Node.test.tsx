@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { NodeView } from '../Node';
 
@@ -9,13 +9,17 @@ function wrap(ui: React.ReactNode) {
 }
 
 describe('NodeView', () => {
-  it('renders count when >= 2', () => {
-    render(wrap(<NodeView node={base} state="idle" onClick={() => {}} />));
-    expect(screen.getByText('2')).toBeInTheDocument();
+  it('renders 2 pips when count === 2', () => {
+    const { getAllByTestId } = render(wrap(<NodeView node={base} state="idle" onClick={() => {}} />));
+    expect(getAllByTestId('pip').length).toBe(2);
   });
-  it('hides count when count === 1', () => {
-    render(wrap(<NodeView node={{ ...base, count: 1 }} state="idle" onClick={() => {}} />));
-    expect(screen.queryByText('1')).toBeNull();
+  it('renders 1 pip when count === 1', () => {
+    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 1 }} state="idle" onClick={() => {}} />));
+    expect(getAllByTestId('pip').length).toBe(1);
+  });
+  it('renders no pips when count === 0', () => {
+    const { queryAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 0 }} state="idle" onClick={() => {}} />));
+    expect(queryAllByTestId('pip').length).toBe(0);
   });
   it('applies done class when count <= 0', () => {
     const { container } = render(wrap(<NodeView node={{ ...base, count: 0 }} state="idle" onClick={() => {}} />));

@@ -43,3 +43,40 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .node--snap circle { animation: node-pulse 0.7s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
 .edge--snap line { stroke: var(--neon-green) !important; stroke-width: 0.9 !important; }
 .edge--snap polygon { fill: var(--neon-green) !important; }
+
+/* Change 1: pips handled via SVG circles with data-testid="pip" */
+
+/* Change 4: path breadcrumb */
+.node--recent circle:first-child { stroke: var(--cyan); stroke-width: 0.4; stroke-opacity: 0.5; }
+.edge--recent line { stroke: color-mix(in srgb, var(--cyan) 40%, var(--dim) 60%) !important; }
+
+/* Change 6: stronger idle hierarchy */
+.node--dim { opacity: 0.4; }
+.node--halo circle.node-halo { animation: node-pulse 1.2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+/* Change 5: win cascade */
+.cascade-pulse circle { animation: cascade 600ms ease-out both; }
+.cascade-pulse line { animation: cascade-line 600ms ease-out both; }
+@keyframes cascade {
+  0% { filter: url(#bloom-bright); transform: scale(1); }
+  40% { filter: url(#bloom-bright); transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+@keyframes cascade-line {
+  0% { stroke-width: 0.5; filter: url(#bloom-bright); }
+  40% { stroke-width: 1.2; filter: url(#bloom-bright); }
+  100% { stroke-width: 0.5; }
+}
+
+/* Change 3: commit pulse */
+@keyframes commit-pulse {
+  0% { transform: scale(1); opacity: 0.9; stroke-width: 0.6; }
+  100% { transform: scale(3.5); opacity: 0; stroke-width: 0.1; }
+}
+
+/* Change 8: fail flash */
+.edge--fail-flash line { animation: fail-flash 800ms ease-out both; stroke: var(--danger) !important; }
+@keyframes fail-flash {
+  0%, 70% { stroke-width: 1; filter: url(#bloom-bright); opacity: 1; }
+  100% { stroke-width: 0.5; opacity: 0.6; }
+}

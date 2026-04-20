@@ -7,10 +7,12 @@ export function NodeView({
   node,
   state,
   onClick,
+  recent,
 }: {
   node: GraphNode;
   state: NodeVisualState;
   onClick: (id: string) => void;
+  recent?: boolean;
 }) {
   const done = node.count <= 0;
   const snapActive = state === 'snap';
@@ -23,7 +25,10 @@ export function NodeView({
     state === 'current' && 'node--current',
     state === 'validTarget' && 'node--target',
     snapActive && 'node--snap',
+    recent && !done && 'node--recent',
   ].filter(Boolean).join(' ');
+
+  const pipColor = done ? 'var(--neon-green)' : 'var(--cyan)';
 
   return (
     <g className={classes} onClick={() => onClick(node.id)} style={{ cursor: 'pointer' }}>
@@ -32,11 +37,29 @@ export function NodeView({
         fill={done ? 'var(--neon-green)' : (snapActive ? 'var(--neon-green)' : 'var(--dim)')}
         filter={done || snapActive ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
       />
+      {node.count === 1 && (
+        <circle
+          data-testid="pip"
+          cx={cx} cy={cy} r={0.6}
+          fill={pipColor}
+          filter="url(#bloom-bright)"
+        />
+      )}
       {node.count >= 2 && (
-        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central"
-          className="font-display" fontSize={2.5} fill="#05070d">
-          {node.count}
-        </text>
+        <>
+          <circle
+            data-testid="pip"
+            cx={cx - 1} cy={cy} r={0.6}
+            fill={pipColor}
+            filter="url(#bloom-bright)"
+          />
+          <circle
+            data-testid="pip"
+            cx={cx + 1} cy={cy} r={0.6}
+            fill={pipColor}
+            filter="url(#bloom-bright)"
+          />
+        </>
       )}
     </g>
   );

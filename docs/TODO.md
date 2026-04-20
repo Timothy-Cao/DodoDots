@@ -11,18 +11,18 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 ### Gameplay feel
 
 - [ ] **Add minimal SFX** (click latch, traverse commit, win, fail). The AudioManager scaffold exists in the plan (Phase 9) but isn't implemented yet. MVP: single `<audio>` tags triggered on events, no mixing. Volume from localStorage (`storage.getAudio`).
-- [ ] **First-play onboarding hint** on `/daily`: ghost arrow + "Click a glowing node to begin" that fades after 3s or first click. Gated on `localStorage.getItem('dododots:has-played')`.
+- [x] 2026-04-20 — **First-play onboarding hint** — `<FirstPlayHint>` pill fades after 4.5s or first pointerdown; gated on `dododots:hasPlayed` in localStorage.
 - [ ] **Background grid pattern** via SVG `<pattern>` — subtle 5% alpha grid lines over the deep background. Sells the Tron feel; currently missing.
 
 ### Interaction polish
 
-- [ ] **Pointer cursor on eligible starts.** Currently pointer on all nodes. Make non-eligible nodes `cursor: default`.
-- [ ] **Disable text selection in gameplay area.** Accidental double-click selection breaks the vibe. `user-select: none` on `GameBoard`.
-- [ ] **Trackpad/touch support.** `onMouseMove` only; add `onPointerMove` / basic touch handling so mobile is at least not broken.
+- [x] 2026-04-20 — **Pointer cursor on eligible starts** — hit-target circle sets cursor:pointer for clickable nodes, cursor:default for locked/unreachable.
+- [x] 2026-04-20 — **Disable text selection in gameplay area** — `user-select:none` + `-webkit-user-select:none` on `body` in globals.css.
+- [x] 2026-04-20 — **Trackpad/touch support** — switched to `onPointerMove`/`onPointerLeave` on GameBoard; touch skips snap preview (finger occlusion). Nodes use `onPointerDown` hit targets.
 
 ### Content
 
-- [ ] **Main menu at `/`** (Phase 8 of the plan). Replace the Next.js scaffold placeholder. Links: Daily, Tutorial (disabled), Builder (disabled), Campaign (coming soon), Settings.
+- [x] 2026-04-20 — **Main menu at `/`** — minimal Tron-styled menu with Daily, Tutorial, and disabled stubs for Campaign and Builder.
 
 ---
 
@@ -31,7 +31,7 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 ### Builder + persistence (big)
 
 - [ ] **Level builder** — see Phase 11 of the implementation plan. Supabase schema + auth + RPCs are already specified.
-- [ ] **Tutorial** (Phase 7 of the plan). 5–7 hand-authored lessons teaching the mechanics.
+- [x] 2026-04-20 — **Tutorial** — `/tutorial` route with 4 hand-authored levels (click, path, revisit, think-ahead). Caption bar + Next/Finish progression. Solvability verified in `lib/__tests__/tutorial.test.ts`.
 
 ### Quality / smoothness
 
@@ -86,7 +86,7 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 - [ ] **Campaign structure** — decide: linear unlock, world map, or free select?
 - [ ] **Community level moderation** — once publishing exists, how do we handle spam/inappropriate content?
 - [ ] **Procedural campaign** — can the generator produce a sequence of increasing-difficulty puzzles with curriculum? (Might replace hand-authored campaign entirely.)
-- [ ] **Mobile-first UX pass** — touch-optimized controls, responsive layout, haptic feedback.
+- [x] 2026-04-20 — **Mobile UX pass** — viewport meta, safe-area CSS, touch-action:none on SVG, 44pt hit targets on nodes, haptic vibrate(8ms) on traverse, ActionBar (Undo/Reset/Menu), responsive HUD with clamp(), 48px overlay buttons.
 
 ---
 
@@ -105,6 +105,12 @@ See [QA.md](QA.md) for the full check list. Summary of what to verify before a p
 
 ## Completed
 
+- [x] 2026-04-20 — Mobile foundation: viewport, safe-area CSS, .game-svg touch-action:none, 44pt hit targets, pointer events, haptic feedback
+- [x] 2026-04-20 — ActionBar (Undo/Reset/Menu) floating pill at bottom of every GameScreen
+- [x] 2026-04-20 — Responsive HUD (clamp font-size/padding) + 48px overlay buttons safe for notches
+- [x] 2026-04-20 — FirstPlayHint on /daily (one-time, dismissed on first tap)
+- [x] 2026-04-20 — Main menu at / with Daily, Tutorial, Campaign stub, Builder stub
+- [x] 2026-04-20 — Tutorial: 4 hand-authored levels + /tutorial route + solvability tests
 - [x] 2026-04-19 — Scaffolded Next.js 16 project + dependencies + Vitest
 - [x] 2026-04-19 — Graph types, adjacency helpers, isSolved
 - [x] 2026-04-19 — Pure game state machine (latch, traverse, reset)

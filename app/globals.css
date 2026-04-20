@@ -62,8 +62,25 @@ button:hover { background: rgba(57,208,255,0.1); }
 button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .node--snap circle { animation: node-pulse 0.7s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
-.edge--snap line { stroke: var(--neon-green) !important; stroke-width: 0.9 !important; }
-.edge--snap polygon { fill: var(--neon-green) !important; }
+/* Snap edge: cyan dashed "marching ants" — distinct from done (neon-green solid) */
+.edge--snap line { stroke: var(--cyan) !important; }
+.edge--snap polygon { fill: var(--cyan) !important; }
+
+@keyframes snap-halo-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.node--snap-halo {
+  animation: snap-halo-pulse 0.6s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes snap-edge-march {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -6; }
+}
+.edge--snap line { animation: snap-edge-march 0.8s linear infinite; }
 
 /* Change 1: pips handled via SVG circles with data-testid="pip" */
 

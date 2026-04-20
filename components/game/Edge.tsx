@@ -23,12 +23,14 @@ export function EdgeView({
   const directed = edge.direction !== 'bi';
   const bright = done || snap;
 
-  // Determine stroke color
+  // Determine stroke color — snap is cyan (distinct from done's neon-green)
   let strokeColor: string;
   if (isFailed) {
     strokeColor = 'var(--danger)';
-  } else if (bright) {
+  } else if (done) {
     strokeColor = 'var(--neon-green)';
+  } else if (snap) {
+    strokeColor = 'var(--cyan)';
   } else if (isVisited) {
     strokeColor = 'color-mix(in srgb, var(--cyan) 50%, var(--dim) 50%)';
   } else {
@@ -72,7 +74,8 @@ export function EdgeView({
       <line
         x1={x1} y1={y1} x2={x2} y2={y2}
         stroke={strokeColor}
-        strokeWidth={0.5}
+        strokeWidth={snap ? 0.8 : 0.5}
+        strokeDasharray={snap ? '2 1' : undefined}
         filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
       />
       {directed && (

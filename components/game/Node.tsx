@@ -34,8 +34,12 @@ export function NodeView({
   // Determine fill and filter based on state
   let fill: string;
   let bloomFilter: string;
-  if (done || snapActive) {
+  if (done) {
     fill = 'var(--neon-green)';
+    bloomFilter = 'url(#bloom-bright)';
+  } else if (snapActive) {
+    // Snap state: cyan, not green — visually distinct from "done"
+    fill = 'var(--cyan)';
     bloomFilter = 'url(#bloom-bright)';
   } else if (isVisited) {
     fill = 'color-mix(in srgb, var(--cyan) 30%, var(--dim) 70%)';
@@ -114,6 +118,18 @@ export function NodeView({
         filter={bloomFilter}
         pointerEvents="none"
       />
+      {/* Snap halo: pulsing dashed ring — distinct from done */}
+      {snapActive && (
+        <circle
+          className="node--snap-halo"
+          cx={cx} cy={cy} r={5}
+          fill="none"
+          stroke="var(--cyan)"
+          strokeWidth={0.3}
+          strokeDasharray="1.5 1"
+          pointerEvents="none"
+        />
+      )}
       {/* Commit ring pulse */}
       {pulse && (
         <circle

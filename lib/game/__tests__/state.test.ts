@@ -20,6 +20,48 @@ describe('initGame', () => {
   });
 });
 
+describe('reduce/traverse', () => {
+  it('decrements edge + destination node, sets current, decrements movesRemaining', () => {
+    let s = initGame(twoNode, 3);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    expect(s.phase).toBe('won');
+    expect(s.graph.edges[0].count).toBe(0);
+    expect(s.graph.nodes[1].count).toBe(0);
+    expect(s.movesRemaining).toBe(2);
+    expect(s.current).toBe('b');
+  });
+
+  it('ignores traverse to non-adjacent node', () => {
+    let s = initGame({
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 1, startEligible: false },
+        { id: 'c', x: 2, y: 0, count: 1, startEligible: false },
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    }, 3);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    const s2 = reduce(s, { type: 'traverse', nodeId: 'c' });
+    expect(s2).toBe(s);
+  });
+
+  it('fails when movesRemaining hits 0 without solving', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 2, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 2, startEligible: false },
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    };
+    let s = initGame(g, 1);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    expect(s.phase).toBe('failed');
+    expect(s.movesRemaining).toBe(0);
+  });
+});
+
 describe('reduce/latch', () => {
   it('transitions idle -> latched and decrements the node counter', () => {
     const s0 = initGame(twoNode, 3);

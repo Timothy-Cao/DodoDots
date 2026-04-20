@@ -32,7 +32,8 @@ export function GameBoard({
 }) {
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
 
-  const onMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+  const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (e.pointerType === 'touch') return; // no hover preview on touch — fingers occlude
     const svg = e.currentTarget;
     const pt = svg.createSVGPoint();
     pt.x = e.clientX; pt.y = e.clientY;
@@ -41,7 +42,7 @@ export function GameBoard({
     const p = pt.matrixTransform(ctm.inverse());
     setMouse({ x: p.x / 100, y: p.y / 100 });
   };
-  const onMouseLeave = () => setMouse(null);
+  const onPointerLeave = () => setMouse(null);
 
   // Clear lastCommit after animation window
   useEffect(() => {
@@ -112,7 +113,8 @@ export function GameBoard({
 
   return (
     <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"
-      onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
+      className="game-svg"
+      onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
       <BloomDefs />
       <defs>
         <pattern id="tron-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">

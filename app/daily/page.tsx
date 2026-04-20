@@ -19,7 +19,7 @@ export default function DailyPage() {
   }, [date, puzzle.maxMoves]);
   return (
     <>
-      <GameScreen graph={puzzle.graph} maxMoves={puzzle.maxMoves} title={`DAILY ${date}`} onWin={onWin} />
+      <GameScreen graph={puzzle.graph} maxMoves={puzzle.maxMoves} title={`DAILY ${date}`} onWin={onWin} shareData={{ date }} />
       <FirstPlayHint />
     </>
   );

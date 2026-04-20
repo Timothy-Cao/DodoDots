@@ -11,9 +11,11 @@ import { ActionBar } from '@/components/ui/ActionBar';
 import { useKeyboardShortcuts } from '@/lib/keyboard';
 import { getNode } from '@/lib/graph';
 import type { Graph } from '@/lib/graph';
+import { shareResult } from '@/lib/share';
+import { unlockAudio } from '@/lib/sfx';
 
 export function GameScreen({
-  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false,
+  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false, shareData,
 }: {
   graph: Graph;
   maxMoves: number;
@@ -22,6 +24,7 @@ export function GameScreen({
   onFail?: () => void;
   menuHref?: string;
   hideWinOverlay?: boolean;
+  shareData?: { date: string };
 }) {
   const router = useRouter();
   const { state, load, dispatch, undo, resetGame, lastCommit, clearLastCommit, history } = useGameStore();
@@ -31,6 +34,13 @@ export function GameScreen({
   const [showFailOverlay, setShowFailOverlay] = useState(false);
 
   useEffect(() => { load(graph, maxMoves); }, [graph, maxMoves, load]);
+
+  // Unlock Web Audio on first pointer interaction (required by browsers)
+  useEffect(() => {
+    const unlock = () => unlockAudio();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    return () => window.removeEventListener('pointerdown', unlock);
+  }, []);
 
   // Reset overlays on load/state reset
   useEffect(() => {
@@ -130,6 +140,9 @@ export function GameScreen({
           movesUsed={movesUsed}
           optimalMoves={state.maxMoves}
           onMenu={() => router.push(menuHref)}
+          onShare={shareData
+            ? () => shareResult({ date: shareData.date, movesUsed, optimal: state.maxMoves })
+            : undefined}
         />
       )}
       {showFailOverlay && state.phase === 'failed' && (

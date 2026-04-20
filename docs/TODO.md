@@ -10,9 +10,9 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 
 ### Gameplay feel
 
-- [ ] **Add minimal SFX** (click latch, traverse commit, win, fail). The AudioManager scaffold exists in the plan (Phase 9) but isn't implemented yet. MVP: single `<audio>` tags triggered on events, no mixing. Volume from localStorage (`storage.getAudio`).
+- [x] 2026-04-20 — **Add SFX** — zero-asset Web Audio API synth in `lib/sfx.ts`: latch, traverse, complete (element hits 0), win (C-E-G chord), fail, undo, invalid. Wired into `gameStore.dispatch` and `undo`. AudioContext unlocked on first pointerdown in GameScreen.
 - [x] 2026-04-20 — **First-play onboarding hint** — `<FirstPlayHint>` pill fades after 4.5s or first pointerdown; gated on `dododots:hasPlayed` in localStorage.
-- [ ] **Background grid pattern** via SVG `<pattern>` — subtle 5% alpha grid lines over the deep background. Sells the Tron feel; currently missing.
+- [x] 2026-04-20 — **Background grid pattern** — full-viewport CSS grid on `html` element (40px, 5% alpha cyan lines). SVG `<pattern>` rect removed; CSS is single source of truth.
 
 ### Interaction polish
 
@@ -60,8 +60,8 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 ### UX
 
 - [ ] **Best-score tracking** per daily date. Store in `dailyCompletions` (`bestMoves` field). Show "Your best: N" on re-play.
-- [ ] **Share result** — generate a URL (`/daily?date=2026-04-19&seed=x`) or a screenshot. Decide: is sharing part of the product or out of scope?
-- [ ] **Streak counter** — N days in a row you've solved daily. Displayed on main menu once menu exists.
+- [x] 2026-04-20 — **Share result** — `lib/share.ts` with Web Share API + clipboard fallback. Star rating (1–4 stars based on moves/par ratio). Share button on daily win overlay, inline 'Copied!' feedback for clipboard path.
+- [x] 2026-04-20 — **Streak counter** — `storage.getStreak` / `updateStreakOnSolve`. `<StreakBadge>` on main menu (hidden when streak=0). 30-day `<SolvedCalendar>` grid also on main menu.
 - [ ] **Keyboard shortcut legend** — small `?` button in HUD that shows `R, Z, Esc` list on hover.
 
 ### Accessibility
@@ -104,6 +104,13 @@ See [QA.md](QA.md) for the full check list. Summary of what to verify before a p
 ---
 
 ## Completed
+
+- [x] 2026-04-20 — Visual: unified filled-pip grammar — node pips always filled (grey=remaining, green=consumed); edge pips replaced with perpendicular tick marks (line segments) for visual grammar distinction
+- [x] 2026-04-20 — Visual: full-viewport CSS grid background; SVG grid rect removed
+- [x] 2026-04-20 — HUD moves counter labeled "MOVES · N" (was bare number)
+- [x] 2026-04-20 — Streak tracking: `getStreak`/`updateStreakOnSolve` in storage; StreakBadge + SolvedCalendar on main menu
+- [x] 2026-04-20 — Share button on daily win overlay via Web Share API + clipboard fallback with star rating
+- [x] 2026-04-20 — SFX: zero-asset synth system (7 sounds), wired into game store and GameScreen
 
 - [x] 2026-04-20 — Mobile foundation: viewport, safe-area CSS, .game-svg touch-action:none, 44pt hit targets, pointer events, haptic feedback
 - [x] 2026-04-20 — ActionBar (Undo/Reset/Menu) floating pill at bottom of every GameScreen

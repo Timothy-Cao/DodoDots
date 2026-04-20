@@ -1,0 +1,37 @@
+<h2>Level Builder — how should users place nodes and edges?</h2>
+<p class="subtitle">Two interaction models. Pick the one that feels right for a Tron-style graph editor.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Free-placement mode switcher</h3>
+      <p><strong>Node mode:</strong> click empty canvas to drop a node. Click a node to select it (for count, start-eligible toggle).</p>
+      <p><strong>Edge mode:</strong> click one node then another to create an edge. Click existing edge to select (toggle direction, set count).</p>
+      <p><strong>Properties panel</strong> on the right shows details for the selected element with count (1–9) slider, direction toggle, start-eligible toggle.</p>
+      <p><strong>Pros:</strong> Clean, few clicks. <strong>Cons:</strong> Must remember which mode you're in.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Modeless drag-to-connect</h3>
+      <p><strong>Double-click empty canvas</strong> to create a node. <strong>Drag from one node to another</strong> to create an edge. <strong>Click anything</strong> to select it.</p>
+      <p>All properties edited via the right-side inspector panel. Keyboard shortcuts: <code>1–9</code> sets count of selected element, <code>D</code> cycles edge direction, <code>S</code> toggles start-eligible, <code>Delete</code> removes.</p>
+      <p><strong>Pros:</strong> No mode switching, fluid. <strong>Cons:</strong> Drag-to-connect can feel finicky with small nodes; double-click vs single-click needs care.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid: toolbar + drag</h3>
+      <p>Top toolbar with three tools: <em>Select</em>, <em>Node</em>, <em>Edge</em> (keyboard: V / N / E — like Figma). In Node tool, click to drop. In Edge tool, drag between nodes. Select tool is default for editing properties.</p>
+      <p>Inspector panel on the right for selected item. Same keyboard shortcuts as B for properties.</p>
+      <p><strong>Pros:</strong> Familiar to anyone who's used a design tool; predictable. <strong>Cons:</strong> One more click than B for quick additions.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle">In all three: global level settings (max moves, level name) live in a small panel. <strong>"Playtest"</strong> button transitions to the gameplay view running on the current graph. <strong>"Publish"</strong> is disabled until you've playtested successfully.</p>

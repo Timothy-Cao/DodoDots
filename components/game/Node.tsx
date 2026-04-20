@@ -67,11 +67,14 @@ export function NodeView({
   const outlinePips = done ? 0 : node.count;
   const showPips = totalPips <= 2;
 
+  // Cursor logic: pointer for clickable nodes, default for locked/unreachable
+  const isClickable = state === 'startEligible' || state === 'current' || state === 'validTarget' || state === 'snap';
+  const hitCursor = (!done && isClickable) || (state === 'idle' && !done) ? 'pointer' : 'default';
+
   return (
     <g
       className={classes}
-      onClick={() => onClick(node.id)}
-      style={{ cursor: 'pointer', opacity: dimInIdle ? 0.3 : undefined, ...cascadeStyle }}
+      style={{ opacity: dimInIdle ? 0.3 : undefined, ...cascadeStyle }}
     >
       {/* Startable-in-idle halo ring */}
       {isStartableInIdle && (
@@ -82,6 +85,7 @@ export function NodeView({
           stroke="var(--cyan)"
           strokeWidth={0.4}
           opacity={0.5}
+          pointerEvents="none"
         />
       )}
       {/* Legacy startEligible halo for backward compat */}
@@ -93,13 +97,22 @@ export function NodeView({
           stroke="var(--cyan)"
           strokeWidth={0.2}
           opacity={0.6}
+          pointerEvents="none"
         />
       )}
-      {/* Main node circle */}
+      {/* Invisible hit target — ~44pt effective on mobile (~28pt on desktop) */}
+      <circle
+        cx={cx} cy={cy} r={7}
+        fill="transparent"
+        style={{ cursor: hitCursor }}
+        onPointerDown={(e) => { e.preventDefault(); onClick(node.id); }}
+      />
+      {/* Main node circle — decorative only */}
       <circle
         cx={cx} cy={cy} r={3}
         fill={fill}
         filter={bloomFilter}
+        pointerEvents="none"
       />
       {/* Commit ring pulse */}
       {pulse && (
@@ -110,6 +123,7 @@ export function NodeView({
           stroke="var(--cyan)"
           strokeWidth={0.5}
           filter="url(#bloom-bright)"
+          pointerEvents="none"
         />
       )}
       {/* Pips for count 1 or 2 */}
@@ -121,6 +135,7 @@ export function NodeView({
           stroke={outlinePips > 0 ? 'var(--cyan)' : 'var(--neon-green)'}
           strokeWidth={0.15}
           filter="url(#bloom-bright)"
+          pointerEvents="none"
         />
       )}
       {!done && showPips && totalPips === 2 && (
@@ -133,6 +148,7 @@ export function NodeView({
             stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
             strokeWidth={0.15}
             filter="url(#bloom-bright)"
+            pointerEvents="none"
           />
           {/* Right pip */}
           <circle
@@ -142,6 +158,7 @@ export function NodeView({
             stroke={filledPips >= 2 ? 'none' : 'var(--cyan)'}
             strokeWidth={0.15}
             filter="url(#bloom-bright)"
+            pointerEvents="none"
           />
         </>
       )}

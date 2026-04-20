@@ -4,85 +4,67 @@ import { initGame, reduce, type GameState, type GameAction } from '@/lib/game/st
 import { getValidNeighbors } from '@/lib/graph';
 import type { Graph } from '@/lib/graph';
 
-const RECENT_WINDOW = 3;
+type LastCommit = { nodeId: string; edgeId: string; at: number };
 
 type GameStore = {
   state: GameState | null;
-  recentNodes: string[];
-  recentEdges: string[];
-  history: GameAction[];
+  history: GameState[];         // past states for undo (excluding current)
+  lastCommit: LastCommit | null;
   load: (graph: Graph, maxMoves: number) => void;
   dispatch: (a: GameAction) => void;
   undo: () => void;
+  clearLastCommit: () => void;
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
   state: null,
-  recentNodes: [],
-  recentEdges: [],
   history: [],
+  lastCommit: null,
 
   load: (graph, maxMoves) => set({
     state: initGame(graph, maxMoves),
-    recentNodes: [],
-    recentEdges: [],
     history: [],
+    lastCommit: null,
   }),
 
   dispatch: (a) => {
-    const { state, recentNodes, recentEdges, history } = get();
+    const { state, history } = get();
     if (!state) return;
-    const next = reduce(state, a);
-    if (next === state) return; // no-op
 
-    let newRecentNodes = recentNodes;
-    let newRecentEdges = recentEdges;
+    // Push current state to history before latch/traverse so we can undo
     let newHistory = history;
-
-    if (a.type === 'traverse') {
-      newRecentNodes = [...recentNodes, a.nodeId].slice(-RECENT_WINDOW);
-      if (state.current) {
-        const neighbors = getValidNeighbors(state.graph, state.current);
-        const hit = neighbors.find(n => n.nodeId === a.nodeId);
-        if (hit) {
-          newRecentEdges = [...recentEdges, hit.edgeId].slice(-RECENT_WINDOW);
-        }
-      }
-      newHistory = [...history, a];
-    } else if (a.type === 'latch') {
-      newHistory = [...history, a];
+    if (a.type === 'latch' || a.type === 'traverse') {
+      newHistory = [...history, state];
     } else if (a.type === 'reset') {
-      newRecentNodes = [];
-      newRecentEdges = [];
       newHistory = [];
     }
 
-    set({ state: next, recentNodes: newRecentNodes, recentEdges: newRecentEdges, history: newHistory });
+    const next = reduce(state, a);
+    if (next === state) return; // no-op
+
+    let lastCommit = get().lastCommit;
+
+    if (a.type === 'traverse') {
+      // Find the edge that was traversed
+      const neighbors = getValidNeighbors(state.graph, state.current!);
+      const hit = neighbors.find(n => n.nodeId === a.nodeId);
+      if (hit) {
+        lastCommit = { nodeId: a.nodeId, edgeId: hit.edgeId, at: Date.now() };
+      }
+    } else if (a.type === 'reset') {
+      lastCommit = null;
+    }
+
+    set({ state: next, history: newHistory, lastCommit });
   },
 
   undo: () => {
-    const { state, history } = get();
-    if (!state || history.length === 0) return;
-
+    const { history } = get();
+    if (history.length === 0) return;
+    const prev = history[history.length - 1];
     const newHistory = history.slice(0, -1);
-
-    // Replay from initial state
-    let replayed = initGame(state.initialGraph, state.maxMoves);
-    let newRecentNodes: string[] = [];
-    let newRecentEdges: string[] = [];
-
-    for (const a of newHistory) {
-      if (a.type === 'traverse') {
-        if (replayed.current) {
-          const neighbors = getValidNeighbors(replayed.graph, replayed.current);
-          const hit = neighbors.find(n => n.nodeId === a.nodeId);
-          if (hit) newRecentEdges = [...newRecentEdges, hit.edgeId].slice(-RECENT_WINDOW);
-        }
-        newRecentNodes = [...newRecentNodes, a.nodeId].slice(-RECENT_WINDOW);
-      }
-      replayed = reduce(replayed, a);
-    }
-
-    set({ state: replayed, history: newHistory, recentNodes: newRecentNodes, recentEdges: newRecentEdges });
+    set({ state: prev, history: newHistory, lastCommit: null });
   },
+
+  clearLastCommit: () => set({ lastCommit: null }),
 }));

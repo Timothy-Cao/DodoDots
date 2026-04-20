@@ -1,12 +1,41 @@
 export function HUD({ title, movesUsed, optimalMoves }: { title: string; movesUsed: number; optimalMoves: number }) {
   const over = movesUsed > optimalMoves;
   return (
-    <div style={{ position: 'absolute', top: 16, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', padding: '0 24px', pointerEvents: 'none' }}>
-      <div className="font-display" style={{ color: 'var(--cyan)', fontSize: 14 }}>{title}</div>
-      <div className="font-display" style={{ color: over ? 'var(--danger)' : 'var(--cyan)', fontSize: 18 }}>
-        {movesUsed}{over ? `  (par ${optimalMoves})` : ''}
+    <div style={{
+      position: 'absolute',
+      top: 'calc(12px + env(safe-area-inset-top))',
+      left: 0,
+      right: 0,
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding: '0 clamp(12px, 4vw, 24px)',
+      pointerEvents: 'none',
+      gap: 12,
+    }}>
+      <div
+        className="font-display"
+        style={{
+          color: 'var(--cyan)',
+          fontSize: 'clamp(11px, 2.8vw, 14px)',
+          flex: '1 1 0',
+          minWidth: 0,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {title}
       </div>
-      <div style={{ width: 80 }} />
+      <div
+        className="font-display"
+        style={{
+          color: over ? 'var(--danger)' : 'var(--cyan)',
+          fontSize: 'clamp(14px, 3.6vw, 18px)',
+          flex: '0 0 auto',
+        }}
+      >
+        {movesUsed}{over ? ` (par ${optimalMoves})` : ''}
+      </div>
     </div>
   );
 }

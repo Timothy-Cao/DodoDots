@@ -6,6 +6,14 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
 
 export const metadata = { title: 'DodoDots' };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${orbitron.variable} ${inter.variable}`}>

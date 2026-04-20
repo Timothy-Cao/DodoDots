@@ -15,6 +15,7 @@ export default function DailyPage() {
   const puzzle = useMemo(() => generateDaily(date), [date]);
   const onWin = useCallback(() => {
     storage.markDaily(date, { solved: true, movesUsed: puzzle.maxMoves });
+    storage.updateStreakOnSolve(date);
   }, [date, puzzle.maxMoves]);
   return (
     <>

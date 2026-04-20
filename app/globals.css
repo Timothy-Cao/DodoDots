@@ -236,6 +236,38 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   display: grid; place-items: center;
 }
 
+/* Streak badge */
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border: 1px solid rgba(57, 208, 255, 0.3);
+  border-radius: 999px; font-family: var(--font-display);
+  color: var(--cyan); font-size: 14px; letter-spacing: 0.08em;
+}
+.streak-count { font-size: 20px; color: var(--neon-green); }
+.streak-label { font-size: 11px; opacity: 0.7; }
+
+/* Solved calendar (30-day grid) */
+.solved-calendar {
+  display: grid; grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  max-width: 280px; margin: 0 auto;
+}
+.solved-cell {
+  width: 100%; aspect-ratio: 1;
+  background: rgba(106, 122, 143, 0.15);
+  border: 1px solid rgba(106, 122, 143, 0.2);
+  border-radius: 4px;
+}
+.solved-cell.solved {
+  background: rgba(57, 255, 142, 0.35);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 8px rgba(57, 255, 142, 0.5);
+}
+.solved-cell.today {
+  border-color: var(--cyan);
+  border-width: 2px;
+}
+
 /* Tutorial layout */
 .tutorial-root { position: relative; width: 100vw; height: 100vh; }
 .tutorial-caption {

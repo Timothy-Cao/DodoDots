@@ -54,4 +54,26 @@ export const storage = {
     if (typeof window === 'undefined') return;
     localStorage.setItem('dododots:hasPlayed', '1');
   },
+
+  getStreak: (): { count: number; lastSolvedDate: string | null } => {
+    if (typeof window === 'undefined') return { count: 0, lastSolvedDate: null };
+    try {
+      const raw = localStorage.getItem('dododots:streak');
+      return raw ? JSON.parse(raw) : { count: 0, lastSolvedDate: null };
+    } catch {
+      return { count: 0, lastSolvedDate: null };
+    }
+  },
+
+  updateStreakOnSolve: (todayIso: string): { count: number; lastSolvedDate: string | null } => {
+    if (typeof window === 'undefined') return { count: 0, lastSolvedDate: null };
+    const prev = storage.getStreak();
+    if (prev.lastSolvedDate === todayIso) return prev; // already counted today
+    const yesterday = new Date(new Date(todayIso).getTime() - 24 * 60 * 60 * 1000);
+    const yesterdayIso = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+    const count = prev.lastSolvedDate === yesterdayIso ? prev.count + 1 : 1;
+    const next = { count, lastSolvedDate: todayIso };
+    localStorage.setItem('dododots:streak', JSON.stringify(next));
+    return next;
+  },
 };

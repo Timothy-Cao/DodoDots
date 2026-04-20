@@ -46,4 +46,12 @@ export const storage = {
     delete all[id];
     set('builderDrafts', all);
   },
+  getHasPlayed: (): boolean => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('dododots:hasPlayed') === '1';
+  },
+  markHasPlayed: (): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('dododots:hasPlayed', '1');
+  },
 };

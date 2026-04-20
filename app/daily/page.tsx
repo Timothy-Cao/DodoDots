@@ -2,6 +2,7 @@
 import { useMemo, useCallback } from 'react';
 import { generateDaily } from '@/lib/generator';
 import { GameScreen } from '@/components/game/GameScreen';
+import { FirstPlayHint } from '@/components/ui/FirstPlayHint';
 import { storage } from '@/lib/storage';
 
 function todayIso(): string {
@@ -15,5 +16,10 @@ export default function DailyPage() {
   const onWin = useCallback(() => {
     storage.markDaily(date, { solved: true, movesUsed: puzzle.maxMoves });
   }, [date, puzzle.maxMoves]);
-  return <GameScreen graph={puzzle.graph} maxMoves={puzzle.maxMoves} title={`DAILY ${date}`} onWin={onWin} />;
+  return (
+    <>
+      <GameScreen graph={puzzle.graph} maxMoves={puzzle.maxMoves} title={`DAILY ${date}`} onWin={onWin} />
+      <FirstPlayHint />
+    </>
+  );
 }

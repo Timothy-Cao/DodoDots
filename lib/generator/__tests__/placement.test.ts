@@ -3,14 +3,14 @@ import { placeNodes } from '../placement';
 import { createRng } from '../../rng';
 
 describe('placeNodes', () => {
-  it('returns requested count in [0.1,0.9] range', () => {
+  it('returns requested count in [0.12,0.88] range', () => {
     const pts = placeNodes(createRng('x'), 7);
     expect(pts.length).toBe(7);
     for (const p of pts) {
-      expect(p.x).toBeGreaterThanOrEqual(0.1);
-      expect(p.x).toBeLessThanOrEqual(0.9);
-      expect(p.y).toBeGreaterThanOrEqual(0.1);
-      expect(p.y).toBeLessThanOrEqual(0.9);
+      expect(p.x).toBeGreaterThanOrEqual(0.12);
+      expect(p.x).toBeLessThanOrEqual(0.88);
+      expect(p.y).toBeGreaterThanOrEqual(0.12);
+      expect(p.y).toBeLessThanOrEqual(0.88);
     }
   });
   it('no two points closer than min separation', () => {
@@ -21,5 +21,10 @@ describe('placeNodes', () => {
         expect(Math.hypot(dx, dy)).toBeGreaterThan(0.12);
       }
     }
+  });
+  it('distributes nodes across the interior, not just at corners', () => {
+    const pts = placeNodes(createRng('variety'), 7);
+    const interior = pts.filter(p => p.x > 0.2 && p.x < 0.8 && p.y > 0.2 && p.y < 0.8);
+    expect(interior.length).toBeGreaterThanOrEqual(2);
   });
 });

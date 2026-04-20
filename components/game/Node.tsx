@@ -1,7 +1,7 @@
 'use client';
 import type { GraphNode } from '@/lib/graph';
 
-export type NodeVisualState = 'idle' | 'startEligible' | 'current' | 'validTarget';
+export type NodeVisualState = 'idle' | 'startEligible' | 'current' | 'validTarget' | 'snap';
 
 export function NodeView({
   node,
@@ -13,6 +13,7 @@ export function NodeView({
   onClick: (id: string) => void;
 }) {
   const done = node.count <= 0;
+  const snapActive = state === 'snap';
   const cx = node.x * 100;
   const cy = node.y * 100;
   const classes = [
@@ -21,14 +22,15 @@ export function NodeView({
     state === 'startEligible' && 'node--pulse',
     state === 'current' && 'node--current',
     state === 'validTarget' && 'node--target',
+    snapActive && 'node--snap',
   ].filter(Boolean).join(' ');
 
   return (
     <g className={classes} onClick={() => onClick(node.id)} style={{ cursor: 'pointer' }}>
       <circle
         cx={cx} cy={cy} r={3}
-        fill={done ? 'var(--neon-green)' : 'var(--dim)'}
-        filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        fill={done ? 'var(--neon-green)' : (snapActive ? 'var(--neon-green)' : 'var(--dim)')}
+        filter={done || snapActive ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
       />
       {node.count >= 2 && (
         <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central"

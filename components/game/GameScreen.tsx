@@ -20,7 +20,7 @@ export function GameScreen({
   menuHref?: string;
 }) {
   const router = useRouter();
-  const { state, anim, load, dispatch, finishAnim } = useGameStore();
+  const { state, load, dispatch } = useGameStore();
 
   useEffect(() => { load(graph, maxMoves); }, [graph, maxMoves, load]);
 
@@ -39,7 +39,7 @@ export function GameScreen({
 
   const handleNode = (id: string) => {
     if (state.phase === 'idle') dispatch({ type: 'latch', nodeId: id });
-    else if (state.phase === 'latched' || state.phase === 'tracing') dispatch({ type: 'traverse', nodeId: id });
+    else if (state.phase === 'latched') dispatch({ type: 'traverse', nodeId: id });
   };
 
   return (
@@ -49,9 +49,7 @@ export function GameScreen({
         graph={state.graph}
         current={state.current}
         phase={state.phase}
-        anim={anim ? { from: anim.from, to: anim.to } : null}
         onNodeClick={handleNode}
-        onAnimDone={finishAnim}
       />
       {state.phase === 'won' && <WinOverlay onMenu={() => router.push(menuHref)} />}
       {state.phase === 'failed' && <FailOverlay onRetry={() => dispatch({ type: 'reset' })} onMenu={() => router.push(menuHref)} />}

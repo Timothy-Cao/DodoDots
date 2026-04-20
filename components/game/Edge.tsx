@@ -1,15 +1,17 @@
 import type { GraphEdge, GraphNode } from '@/lib/graph';
 
-export function EdgeView({ edge, from, to }: { edge: GraphEdge; from: GraphNode; to: GraphNode }) {
+export function EdgeView({ edge, from, to, snap = false }: { edge: GraphEdge; from: GraphNode; to: GraphNode; snap?: boolean }) {
   const done = edge.count <= 0;
   const x1 = from.x * 100, y1 = from.y * 100;
   const x2 = to.x * 100, y2 = to.y * 100;
   const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
   const directed = edge.direction !== 'bi';
+  const bright = done || snap;
   const classes = [
     'edge',
     done ? 'edge--done' : 'edge--pending',
     directed && 'edge--directed',
+    snap && 'edge--snap',
   ].filter(Boolean).join(' ');
   const arrowX1 = edge.direction === 'backward' ? x2 : x1;
   const arrowY1 = edge.direction === 'backward' ? y2 : y1;
@@ -19,9 +21,9 @@ export function EdgeView({ edge, from, to }: { edge: GraphEdge; from: GraphNode;
     <g className={classes}>
       <line
         x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke={done ? 'var(--neon-green)' : 'var(--dim)'}
+        stroke={bright ? 'var(--neon-green)' : 'var(--dim)'}
         strokeWidth={0.5}
-        filter={done ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
       />
       {directed && (
         <polygon

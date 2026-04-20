@@ -39,3 +39,7 @@ button {
 }
 button:hover { background: rgba(57,208,255,0.1); }
 button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.node--snap circle { animation: node-pulse 0.7s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+.edge--snap line { stroke: var(--neon-green) !important; stroke-width: 0.9 !important; }
+.edge--snap polygon { fill: var(--neon-green) !important; }

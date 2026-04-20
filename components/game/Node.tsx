@@ -8,11 +8,15 @@ export function NodeView({
   state,
   onClick,
   recent,
+  dim,
+  cascadeDelay,
 }: {
   node: GraphNode;
   state: NodeVisualState;
   onClick: (id: string) => void;
   recent?: boolean;
+  dim?: boolean;
+  cascadeDelay?: number;
 }) {
   const done = node.count <= 0;
   const snapActive = state === 'snap';
@@ -26,12 +30,28 @@ export function NodeView({
     state === 'validTarget' && 'node--target',
     snapActive && 'node--snap',
     recent && !done && 'node--recent',
+    dim && 'node--dim',
+    cascadeDelay !== undefined && done && 'cascade-pulse',
   ].filter(Boolean).join(' ');
+
+  const cascadeStyle = cascadeDelay !== undefined && done
+    ? { animationDelay: `${cascadeDelay * 80}ms` }
+    : undefined;
 
   const pipColor = done ? 'var(--neon-green)' : 'var(--cyan)';
 
   return (
-    <g className={classes} onClick={() => onClick(node.id)} style={{ cursor: 'pointer' }}>
+    <g className={classes} onClick={() => onClick(node.id)} style={{ cursor: 'pointer', ...cascadeStyle }}>
+      {state === 'startEligible' && (
+        <circle
+          className="node-halo"
+          cx={cx} cy={cy} r={5}
+          fill="none"
+          stroke="var(--cyan)"
+          strokeWidth={0.2}
+          opacity={0.6}
+        />
+      )}
       <circle
         cx={cx} cy={cy} r={3}
         fill={done ? 'var(--neon-green)' : (snapActive ? 'var(--neon-green)' : 'var(--dim)')}

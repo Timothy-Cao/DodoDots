@@ -49,3 +49,12 @@ export function findEdge(g: Graph, fromId: string, toId: string): GraphEdge | un
 export function getNode(g: Graph, id: string): GraphNode | undefined {
   return g.nodes.find(n => n.id === id);
 }
+
+export function hasUnreachableEdge(g: Graph): boolean {
+  return g.edges.some(e => {
+    if (e.count <= 0) return false;
+    const from = getNode(g, e.from);
+    const to = getNode(g, e.to);
+    return (from?.count ?? 1) <= 0 && (to?.count ?? 1) <= 0;
+  });
+}

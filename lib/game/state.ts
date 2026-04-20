@@ -1,5 +1,5 @@
 import type { Graph } from '../graph';
-import { getNode, isSolved, getValidNeighbors } from '../graph';
+import { getNode, isSolved, hasUnreachableEdge, getValidNeighbors } from '../graph';
 
 export type Phase = 'idle' | 'latched' | 'tracing' | 'won' | 'failed';
 
@@ -37,30 +37,36 @@ export function reduce(s: GameState, a: GameAction): GameState {
       const graph: Graph = {
         ...s.graph,
         nodes: s.graph.nodes.map(n =>
-          n.id === a.nodeId ? { ...n, count: n.count - 1 } : n
+          n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
         ),
       };
       const next: GameState = { ...s, graph, current: a.nodeId, phase: 'latched' };
-      return isSolved(graph) ? { ...next, phase: 'won' } : next;
+      if (isSolved(graph)) return { ...next, phase: 'won' };
+      if (hasUnreachableEdge(graph)) return { ...next, phase: 'failed' };
+      return next;
     }
     case 'traverse': {
       if (s.phase !== 'latched' && s.phase !== 'tracing') return s;
       if (s.current === null) return s;
       if (s.movesRemaining <= 0) return s;
+      // Reject traverse to a node that is already done (count ≤ 0)
+      const destNode = getNode(s.graph, a.nodeId);
+      if (!destNode || destNode.count <= 0) return s;
       const neighbors = getValidNeighbors(s.graph, s.current);
       const hit = neighbors.find(n => n.nodeId === a.nodeId);
       if (!hit) return s;
       const graph: Graph = {
         nodes: s.graph.nodes.map(n =>
-          n.id === a.nodeId ? { ...n, count: n.count - 1 } : n
+          n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
         ),
         edges: s.graph.edges.map(e =>
-          e.id === hit.edgeId ? { ...e, count: e.count - 1 } : e
+          e.id === hit.edgeId ? { ...e, count: Math.max(0, e.count - 1) } : e
         ),
       };
-      const movesRemaining = s.movesRemaining - 1;
+      const movesRemaining = Math.max(0, s.movesRemaining - 1);
       const next: GameState = { ...s, graph, current: a.nodeId, movesRemaining, phase: 'latched' };
       if (isSolved(graph)) return { ...next, phase: 'won' };
+      if (hasUnreachableEdge(graph)) return { ...next, phase: 'failed' };
       if (movesRemaining === 0) return { ...next, phase: 'failed' };
       return next;
     }

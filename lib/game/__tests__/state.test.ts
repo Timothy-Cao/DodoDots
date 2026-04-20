@@ -62,6 +62,42 @@ describe('reduce/traverse', () => {
   });
 });
 
+describe('locked node rule', () => {
+  it('ignores traverse to a node at count 0', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 0, startEligible: false }, // already done
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    };
+    let s = initGame(g, 3);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    const s2 = reduce(s, { type: 'traverse', nodeId: 'b' });
+    expect(s2).toBe(s);
+  });
+});
+
+describe('unreachable edge detection', () => {
+  it('fails when a remaining edge has both endpoints at 0', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 1, startEligible: true },
+        { id: 'c', x: 2, y: 0, count: 0, startEligible: false }, // already at 0
+      ],
+      edges: [
+        { id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' },
+        { id: 'e2', from: 'b', to: 'c', count: 1, direction: 'bi' }, // count>0, but c=0 and b will become 0
+      ],
+    };
+    let s = initGame(g, 3);
+    s = reduce(s, { type: 'latch', nodeId: 'a' }); // a: 0
+    s = reduce(s, { type: 'traverse', nodeId: 'b' }); // b: 0, e1: 0. Edge e2 has count 1 but b=0 c=0 → unreachable
+    expect(s.phase).toBe('failed');
+  });
+});
+
 describe('reduce/latch', () => {
   it('transitions idle -> latched and decrements the node counter', () => {
     const s0 = initGame(twoNode, 3);

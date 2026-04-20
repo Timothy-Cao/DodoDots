@@ -3,6 +3,8 @@ import { getNode, isSolved, hasUnreachableEdge, getValidNeighbors } from '../gra
 
 export type Phase = 'idle' | 'latched' | 'tracing' | 'won' | 'failed';
 
+export type FailReason = { type: 'unreachable_edge'; edgeId: string } | null;
+
 export type GameState = {
   graph: Graph;
   initialGraph: Graph;
@@ -10,6 +12,7 @@ export type GameState = {
   movesRemaining: number;
   phase: Phase;
   current: string | null;
+  failReason: FailReason;
 };
 
 export function initGame(graph: Graph, maxMoves: number): GameState {
@@ -20,6 +23,7 @@ export function initGame(graph: Graph, maxMoves: number): GameState {
     movesRemaining: maxMoves,
     phase: 'idle',
     current: null,
+    failReason: null,
   };
 }
 
@@ -27,6 +31,16 @@ export type GameAction =
   | { type: 'latch'; nodeId: string }
   | { type: 'traverse'; nodeId: string }
   | { type: 'reset' };
+
+function detectUnreachableEdge(graph: Graph): string | null {
+  for (const e of graph.edges) {
+    if (e.count <= 0) continue;
+    const from = getNode(graph, e.from);
+    const to = getNode(graph, e.to);
+    if ((from?.count ?? 1) <= 0 && (to?.count ?? 1) <= 0) return e.id;
+  }
+  return null;
+}
 
 export function reduce(s: GameState, a: GameAction): GameState {
   switch (a.type) {
@@ -40,9 +54,10 @@ export function reduce(s: GameState, a: GameAction): GameState {
           n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
         ),
       };
-      const next: GameState = { ...s, graph, current: a.nodeId, phase: 'latched' };
+      const next: GameState = { ...s, graph, current: a.nodeId, phase: 'latched', failReason: null };
       if (isSolved(graph)) return { ...next, phase: 'won' };
-      if (hasUnreachableEdge(graph)) return { ...next, phase: 'failed' };
+      const unreachableEdgeId = detectUnreachableEdge(graph);
+      if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId } };
       return next;
     }
     case 'traverse': {
@@ -63,9 +78,10 @@ export function reduce(s: GameState, a: GameAction): GameState {
         ),
       };
       const movesRemaining = s.movesRemaining - 1;
-      const next: GameState = { ...s, graph, current: a.nodeId, movesRemaining, phase: 'latched' };
+      const next: GameState = { ...s, graph, current: a.nodeId, movesRemaining, phase: 'latched', failReason: null };
       if (isSolved(graph)) return { ...next, phase: 'won' };
-      if (hasUnreachableEdge(graph)) return { ...next, phase: 'failed' };
+      const unreachableEdgeId = detectUnreachableEdge(graph);
+      if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId } };
       return next;
     }
     case 'reset':

@@ -80,3 +80,35 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   0%, 70% { stroke-width: 1; filter: url(#bloom-bright); opacity: 1; }
   100% { stroke-width: 0.5; opacity: 0.6; }
 }
+
+/* Change 4: node start halo + commit ring */
+.node--start-halo {
+  animation: halo-pulse 1.4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes halo-pulse {
+  0%,100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.25); }
+}
+.node--commit-ring {
+  animation: commit-ring 180ms ease-out forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes commit-ring {
+  0% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+/* Change 5: edge flash and failed edge */
+.edge--flash line { animation: edge-flash 180ms ease-out; }
+@keyframes edge-flash {
+  0% { filter: url(#bloom-bright); stroke-width: 1.2; }
+  100% { }
+}
+.edge--failed line { stroke: var(--danger) !important; animation: edge-fail 700ms ease-in-out infinite; }
+@keyframes edge-fail {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

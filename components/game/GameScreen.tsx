@@ -7,12 +7,13 @@ import type { PulseEntry } from './GameBoard';
 import { HUD } from './HUD';
 import { WinOverlay } from './WinOverlay';
 import { FailOverlay } from './FailOverlay';
+import { ActionBar } from '@/components/ui/ActionBar';
 import { useKeyboardShortcuts } from '@/lib/keyboard';
 import { getNode } from '@/lib/graph';
 import type { Graph } from '@/lib/graph';
 
 export function GameScreen({
-  graph, maxMoves, title, onWin, onFail, menuHref = '/',
+  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false,
 }: {
   graph: Graph;
   maxMoves: number;
@@ -20,9 +21,10 @@ export function GameScreen({
   onWin?: () => void;
   onFail?: () => void;
   menuHref?: string;
+  hideWinOverlay?: boolean;
 }) {
   const router = useRouter();
-  const { state, load, dispatch, undo, lastCommit, clearLastCommit } = useGameStore();
+  const { state, load, dispatch, undo, resetGame, lastCommit, clearLastCommit, history } = useGameStore();
 
   const [pulses, setPulses] = useState<PulseEntry[]>([]);
   const [showWinOverlay, setShowWinOverlay] = useState(false);
@@ -62,8 +64,14 @@ export function GameScreen({
     setPulses(prev => prev.filter(p => p.id !== id));
   }, []);
 
+  const handleReset = useCallback(() => {
+    dispatch({ type: 'reset' });
+    setShowWinOverlay(false);
+    setShowFailOverlay(false);
+  }, [dispatch]);
+
   useKeyboardShortcuts({
-    r: () => { dispatch({ type: 'reset' }); setShowWinOverlay(false); setShowFailOverlay(false); },
+    r: handleReset,
     escape: () => router.push(menuHref),
     z: () => undo(),
     backspace: () => undo(),
@@ -94,6 +102,7 @@ export function GameScreen({
   };
 
   const movesUsed = state.maxMoves - state.movesRemaining;
+  const canUndo = history.length > 0;
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
@@ -110,7 +119,13 @@ export function GameScreen({
         failedEdge={state.failedEdge}
         onCommitAnimationDone={clearLastCommit}
       />
-      {showWinOverlay && state.phase === 'won' && (
+      <ActionBar
+        canUndo={canUndo}
+        onUndo={() => undo()}
+        onReset={handleReset}
+        onMenu={() => router.push(menuHref)}
+      />
+      {!hideWinOverlay && showWinOverlay && state.phase === 'won' && (
         <WinOverlay
           movesUsed={movesUsed}
           optimalMoves={state.maxMoves}
@@ -119,7 +134,7 @@ export function GameScreen({
       )}
       {showFailOverlay && state.phase === 'failed' && (
         <FailOverlay
-          onRetry={() => { dispatch({ type: 'reset' }); setShowWinOverlay(false); setShowFailOverlay(false); }}
+          onRetry={handleReset}
           onMenu={() => router.push(menuHref)}
           reason={state.failReason?.type === 'unreachable_edge' ? 'unreachable_edge' : undefined}
         />

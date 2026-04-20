@@ -9,11 +9,25 @@ export type GeneratedPuzzle = {
   solution: string[];
 };
 
-export function generateDaily(seed: string): GeneratedPuzzle {
+export type GeneratorOptions = {
+  minNodes?: number;
+  maxNodes?: number;
+  walkMultiplierMin?: number;
+  walkMultiplierMax?: number;
+};
+
+export function generateDaily(seed: string, options?: GeneratorOptions): GeneratedPuzzle {
+  const {
+    minNodes = 6,
+    maxNodes = 8,
+    walkMultiplierMin = 1.4,
+    walkMultiplierMax = 1.8,
+  } = options ?? {};
+
   const rng = createRng(seed);
-  const nodeCount = pickInt(rng, 4, 11);
+  const nodeCount = pickInt(rng, minNodes, maxNodes);
   const points = placeNodes(rng, nodeCount);
-  const walkLen = Math.round(nodeCount * (1.5 + rng() * 1.0));
+  const walkLen = Math.round(nodeCount * (walkMultiplierMin + rng() * (walkMultiplierMax - walkMultiplierMin)));
   const walk = simulateWalk(rng, points, walkLen);
 
   const nodeVisits = new Array(nodeCount).fill(0);

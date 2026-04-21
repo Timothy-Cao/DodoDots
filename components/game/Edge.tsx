@@ -122,17 +122,17 @@ export function EdgeView({
           d={pathD!}
           fill="none"
           stroke={strokeColor}
-          strokeWidth={snap ? 0.8 : 0.7}
+          strokeWidth={snap ? 1.0 : (bright ? 0.7 : 1.0)}
           strokeDasharray={snap ? '2 1' : undefined}
-          filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          filter={bright ? 'url(#bloom-bright)' : undefined}
         />
       ) : (
         <line
           x1={x1} y1={y1} x2={x2} y2={y2}
           stroke={strokeColor}
-          strokeWidth={snap ? 0.8 : 0.7}
+          strokeWidth={snap ? 1.0 : (bright ? 0.7 : 1.0)}
           strokeDasharray={snap ? '2 1' : undefined}
-          filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          filter={bright ? 'url(#bloom-bright)' : undefined}
         />
       )}
       {directed && !useCurve && (
@@ -149,8 +149,8 @@ export function EdgeView({
           x1={tick1.x1} y1={tick1.y1}
           x2={tick1.x2} y2={tick1.y2}
           stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--edge-pending)'}
-          strokeWidth={0.6}
-          filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          strokeWidth={0.9}
+          filter={filledPips >= 1 ? 'url(#bloom-bright)' : undefined}
         />
       )}
       {tick2 && (
@@ -159,8 +159,8 @@ export function EdgeView({
           x1={tick2.x1} y1={tick2.y1}
           x2={tick2.x2} y2={tick2.y2}
           stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--edge-pending)'}
-          strokeWidth={0.6}
-          filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          strokeWidth={0.9}
+          filter={filledPips >= 2 ? 'url(#bloom-bright)' : undefined}
         />
       )}
     </g>

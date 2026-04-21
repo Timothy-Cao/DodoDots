@@ -10,12 +10,12 @@ import { FailOverlay } from './FailOverlay';
 import { ActionBar } from '@/components/ui/ActionBar';
 import { useKeyboardShortcuts } from '@/lib/keyboard';
 import { getNode } from '@/lib/graph';
-import type { Graph } from '@/lib/graph';
+import type { Graph, Mode } from '@/lib/graph';
 import { shareResult } from '@/lib/share';
 import { unlockAudio } from '@/lib/sfx';
 
 export function GameScreen({
-  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false, shareData,
+  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose',
 }: {
   graph: Graph;
   maxMoves: number;
@@ -25,6 +25,7 @@ export function GameScreen({
   menuHref?: string;
   hideWinOverlay?: boolean;
   shareData?: { date: string };
+  mode?: Mode;
 }) {
   const router = useRouter();
   const { state, load, dispatch, undo, resetGame, lastCommit, clearLastCommit, history } = useGameStore();
@@ -33,7 +34,7 @@ export function GameScreen({
   const [showWinOverlay, setShowWinOverlay] = useState(false);
   const [showFailOverlay, setShowFailOverlay] = useState(false);
 
-  useEffect(() => { load(graph, maxMoves); }, [graph, maxMoves, load]);
+  useEffect(() => { load(graph, maxMoves, mode); }, [graph, maxMoves, mode, load]);
 
   // Unlock Web Audio on first pointer interaction (required by browsers)
   useEffect(() => {

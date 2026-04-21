@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { initGame, reduce, type GameState, type GameAction } from '@/lib/game/state';
 import { getValidNeighbors } from '@/lib/graph';
-import type { Graph } from '@/lib/graph';
+import type { Graph, Mode } from '@/lib/graph';
 import { playSfx } from '@/lib/sfx';
 
 function hapticCommit() {
@@ -17,7 +17,7 @@ type GameStore = {
   state: GameState | null;
   history: GameState[];         // past states for undo (excluding current)
   lastCommit: LastCommit | null;
-  load: (graph: Graph, maxMoves: number) => void;
+  load: (graph: Graph, maxMoves: number, mode?: Mode) => void;
   dispatch: (a: GameAction) => void;
   undo: () => void;
   clearLastCommit: () => void;
@@ -29,8 +29,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   history: [],
   lastCommit: null,
 
-  load: (graph, maxMoves) => set({
-    state: initGame(graph, maxMoves),
+  load: (graph, maxMoves, mode = 'loose') => set({
+    state: initGame(graph, maxMoves, mode),
     history: [],
     lastCommit: null,
   }),

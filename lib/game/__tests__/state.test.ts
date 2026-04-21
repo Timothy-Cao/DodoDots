@@ -194,6 +194,64 @@ describe('stuck state detection', () => {
   });
 });
 
+describe('strict mode', () => {
+  it('rejects traversal along a locked edge (count ≤ 0) in strict mode', () => {
+    // Graph: a -e1(count:1)- b -e2(count:0)- c
+    // In strict mode, traversing b→c should be rejected because e2.count = 0
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 0.5, y: 0, count: 1, startEligible: false },
+        { id: 'c', x: 1, y: 0, count: 1, startEligible: false },
+      ],
+      edges: [
+        { id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' },
+        { id: 'e2', from: 'b', to: 'c', count: 0, direction: 'bi' },
+      ],
+    };
+    let s = initGame(g, 5, 'strict');
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    const s2 = reduce(s, { type: 'traverse', nodeId: 'c' }); // e2.count=0, should reject
+    expect(s2).toBe(s);
+  });
+
+  it('allows traversal along a locked edge in loose mode', () => {
+    // Same graph as above, but loose mode: e2.count=0 is allowed
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 0.5, y: 0, count: 1, startEligible: false },
+        { id: 'c', x: 1, y: 0, count: 2, startEligible: false },
+      ],
+      edges: [
+        { id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' },
+        { id: 'e2', from: 'b', to: 'c', count: 0, direction: 'bi' },
+      ],
+    };
+    let s = initGame(g, 5, 'loose');
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    const s2 = reduce(s, { type: 'traverse', nodeId: 'c' }); // loose: allowed even though e2.count=0
+    expect(s2).not.toBe(s);
+    expect(s2.current).toBe('c');
+  });
+
+  it('reset preserves strict mode', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 1, startEligible: false },
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    };
+    let s = initGame(g, 3, 'strict');
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    const after = reduce(s, { type: 'reset' });
+    expect(after.mode).toBe('strict');
+  });
+});
+
 describe('reduce/latch', () => {
   it('transitions idle -> latched and decrements the node counter', () => {
     const s0 = initGame(twoNode, 3);

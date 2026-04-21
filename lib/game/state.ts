@@ -1,4 +1,4 @@
-import type { Graph } from '../graph';
+import type { Graph, Mode } from '../graph';
 import { getNode, isSolved, findUnreachableEdge, getValidNeighbors, hasNoValidMoves } from '../graph';
 
 export type Phase = 'idle' | 'latched' | 'tracing' | 'won' | 'failed';
@@ -17,9 +17,10 @@ export type GameState = {
   current: string | null;
   failReason: FailReason;
   failedEdge: string | null;
+  mode: Mode;
 };
 
-export function initGame(graph: Graph, maxMoves: number): GameState {
+export function initGame(graph: Graph, maxMoves: number, mode: Mode = 'loose'): GameState {
   return {
     graph: structuredClone(graph),
     initialGraph: structuredClone(graph),
@@ -29,6 +30,7 @@ export function initGame(graph: Graph, maxMoves: number): GameState {
     current: null,
     failReason: null,
     failedEdge: null,
+    mode,
   };
 }
 
@@ -67,6 +69,11 @@ export function reduce(s: GameState, a: GameAction): GameState {
       const neighbors = getValidNeighbors(s.graph, s.current);
       const hit = neighbors.find(n => n.nodeId === a.nodeId);
       if (!hit) return s;
+      // In strict mode, also reject traversal along a locked edge (count ≤ 0)
+      if (s.mode === 'strict') {
+        const edge = s.graph.edges.find(e => e.id === hit.edgeId);
+        if (edge && edge.count <= 0) return s;
+      }
       const graph: Graph = {
         nodes: s.graph.nodes.map(n =>
           n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
@@ -86,7 +93,7 @@ export function reduce(s: GameState, a: GameAction): GameState {
       return next;
     }
     case 'reset':
-      return initGame(s.initialGraph, s.maxMoves);
+      return initGame(s.initialGraph, s.maxMoves, s.mode);
     default:
       return s;
   }

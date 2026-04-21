@@ -66,3 +66,12 @@ export function findUnreachableEdge(g: Graph): string | null {
 export function hasUnreachableEdge(g: Graph): boolean {
   return findUnreachableEdge(g) !== null;
 }
+
+export function hasNoValidMoves(g: Graph, currentNodeId: string): boolean {
+  const neighbors = getValidNeighbors(g, currentNodeId);
+  // No move is possible if EVERY valid neighbor is already locked (count <= 0)
+  return neighbors.every(n => {
+    const node = getNode(g, n.nodeId);
+    return !node || node.count <= 0;
+  });
+}

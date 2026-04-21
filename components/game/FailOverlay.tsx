@@ -1,4 +1,5 @@
 export function FailOverlay({ onRetry, onMenu, reason }: { onRetry: () => void; onMenu: () => void; reason?: string }) {
+  const heading = reason === 'stuck' ? 'NO MOVES LEFT' : 'STUCK';
   return (
     <div style={{
       position: 'absolute',
@@ -11,10 +12,15 @@ export function FailOverlay({ onRetry, onMenu, reason }: { onRetry: () => void; 
       boxSizing: 'border-box',
     }}>
       <div style={{ textAlign: 'center' }}>
-        <h2 className="font-display" style={{ color: 'var(--danger)', fontSize: 'clamp(30px, 8vw, 40px)', margin: 0 }}>STUCK</h2>
+        <h2 className="font-display" style={{ color: 'var(--danger)', fontSize: 'clamp(30px, 8vw, 40px)', margin: 0 }}>{heading}</h2>
         {reason === 'unreachable_edge' && (
           <p className="font-display" style={{ color: 'var(--dim)', fontSize: 13, marginTop: 8, marginBottom: 0 }}>
             This edge can no longer be cleared.
+          </p>
+        )}
+        {reason === 'stuck' && (
+          <p className="font-display" style={{ color: 'var(--dim)', fontSize: 13, marginTop: 8, marginBottom: 0, maxWidth: 320 }}>
+            There&rsquo;s no way to clear the rest from here. Try again from a different start.
           </p>
         )}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>

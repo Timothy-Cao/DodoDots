@@ -1,9 +1,12 @@
 import type { Graph } from '../graph';
-import { getNode, isSolved, findUnreachableEdge, getValidNeighbors } from '../graph';
+import { getNode, isSolved, findUnreachableEdge, getValidNeighbors, hasNoValidMoves } from '../graph';
 
 export type Phase = 'idle' | 'latched' | 'tracing' | 'won' | 'failed';
 
-export type FailReason = { type: 'unreachable_edge'; edgeId: string } | null;
+export type FailReason =
+  | { type: 'unreachable_edge'; edgeId: string }
+  | { type: 'stuck' }
+  | null;
 
 export type GameState = {
   graph: Graph;
@@ -50,6 +53,9 @@ export function reduce(s: GameState, a: GameAction): GameState {
       if (isSolved(graph)) return { ...next, phase: 'won' };
       const unreachableEdgeId = findUnreachableEdge(graph);
       if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId }, failedEdge: unreachableEdgeId };
+      if (next.current && hasNoValidMoves(graph, next.current)) {
+        return { ...next, phase: 'failed', failReason: { type: 'stuck' } };
+      }
       return next;
     }
     case 'traverse': {
@@ -74,6 +80,9 @@ export function reduce(s: GameState, a: GameAction): GameState {
       if (isSolved(graph)) return { ...next, phase: 'won' };
       const unreachableEdgeId = findUnreachableEdge(graph);
       if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId }, failedEdge: unreachableEdgeId };
+      if (next.current && hasNoValidMoves(graph, next.current)) {
+        return { ...next, phase: 'failed', failReason: { type: 'stuck' } };
+      }
       return next;
     }
     case 'reset':

@@ -115,6 +115,85 @@ describe('unreachable edge detection', () => {
   });
 });
 
+describe('stuck state detection', () => {
+  it('fails when current node has only locked neighbors and puzzle not solved', () => {
+    // Star: a in center connects to b, c, d. All count 1, all edges count 1. Start a only.
+    // After latch a then traverse b: b is 0, a is 0. b's only neighbor is a (locked).
+    // e2 (a-c) and e3 (a-d) still have count 1 — one endpoint unlocked each, so NOT unreachable.
+    // But we can't move anywhere from b. That's "stuck".
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0.5, y: 0.5, count: 1, startEligible: true },
+        { id: 'b', x: 0.2, y: 0.5, count: 1, startEligible: false },
+        { id: 'c', x: 0.8, y: 0.5, count: 1, startEligible: false },
+        { id: 'd', x: 0.5, y: 0.2, count: 1, startEligible: false },
+      ],
+      edges: [
+        { id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' },
+        { id: 'e2', from: 'a', to: 'c', count: 1, direction: 'bi' },
+        { id: 'e3', from: 'a', to: 'd', count: 1, direction: 'bi' },
+      ],
+    };
+    let s = initGame(g, 5);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });
+    expect(s.phase).toBe('failed');
+    expect(s.failReason?.type).toBe('stuck');
+  });
+
+  it('detects stuck immediately after latch if starting node has no unlocked neighbors', () => {
+    // a connects only to b (pre-locked). Latching a makes a=0.
+    // Puzzle is not solved (edge still count 1) and a's only neighbor is locked.
+    // e1: a(0)-b(0) → unreachable; this should still be caught (unreachable takes precedence).
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0, count: 1, startEligible: true },
+        { id: 'b', x: 1, y: 0, count: 0, startEligible: false },
+      ],
+      edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
+    };
+    let s = initGame(g, 3);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });
+    expect(s.phase).toBe('failed');
+    // Unreachable takes precedence over stuck when both apply
+    expect(s.failReason?.type).toBe('unreachable_edge');
+  });
+
+  it('tutorial level 4: visiting e before c/d leaves e1 (a-b) unreachable and fails', () => {
+    // Tutorial 04-puzzle graph: a(1)-b(2); b-c, b-d, b-e (all 1); c-d (1). Only a is start.
+    // Path: latch a → traverse b (b=1) → traverse e (e=0) → back to b (b=0) → traverse c (c=0)
+    //   → traverse d (d=0). Now all nodes are 0, but edge e1 (a-b) was only crossed once;
+    //   its count is still 0 only if we actually went a→b. a→b decremented e1 to 0. So all
+    //   edges: e1=0, e2 (b-c)=0, e3 (c-d)=0, e4 (b-d) still 1 — and b is 0, d is 0 → unreachable.
+    const g: Graph = {
+      nodes: [
+        { id: 'a', x: 0.15, y: 0.5, count: 1, startEligible: true },
+        { id: 'b', x: 0.4, y: 0.5, count: 2, startEligible: false },
+        { id: 'c', x: 0.6, y: 0.3, count: 1, startEligible: false },
+        { id: 'd', x: 0.6, y: 0.7, count: 1, startEligible: false },
+        { id: 'e', x: 0.85, y: 0.5, count: 1, startEligible: false },
+      ],
+      edges: [
+        { id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' },
+        { id: 'e2', from: 'b', to: 'c', count: 1, direction: 'bi' },
+        { id: 'e3', from: 'c', to: 'd', count: 1, direction: 'bi' },
+        { id: 'e4', from: 'b', to: 'd', count: 1, direction: 'bi' },
+        { id: 'e5', from: 'b', to: 'e', count: 1, direction: 'bi' },
+      ],
+    };
+    let s = initGame(g, 6);
+    s = reduce(s, { type: 'latch', nodeId: 'a' });     // a=0
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });  // b=1, e1=0
+    s = reduce(s, { type: 'traverse', nodeId: 'e' });  // e=0, e5=0
+    s = reduce(s, { type: 'traverse', nodeId: 'b' });  // b=0, e5=0 (clamped)
+    s = reduce(s, { type: 'traverse', nodeId: 'c' });  // c=0, e2=0
+    s = reduce(s, { type: 'traverse', nodeId: 'd' });  // d=0, e3=0 — leaves e4 with count 1 and b,d both locked
+    expect(s.phase).toBe('failed');
+    // Either unreachable (if engine catches e4) or stuck (all c's neighbors locked). Either is a fail.
+    expect(s.failReason?.type === 'unreachable_edge' || s.failReason?.type === 'stuck').toBe(true);
+  });
+});
+
 describe('reduce/latch', () => {
   it('transitions idle -> latched and decrements the node counter', () => {
     const s0 = initGame(twoNode, 3);

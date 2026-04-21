@@ -149,7 +149,7 @@ export function GameScreen({
         <FailOverlay
           onRetry={handleReset}
           onMenu={() => router.push(menuHref)}
-          reason={state.failReason?.type === 'unreachable_edge' ? 'unreachable_edge' : undefined}
+          reason={state.failReason?.type}
         />
       )}
     </div>

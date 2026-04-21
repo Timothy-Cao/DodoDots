@@ -8,6 +8,12 @@ const TOOL_TIPS: Record<Tool, string> = {
   edge: 'Drag from one node to another to draw an edge.',
 };
 
+const COUNT_OPTIONS = [
+  { value: 1, label: 'Single' },
+  { value: 2, label: 'Double' },
+  { value: 3, label: 'Triple' },
+];
+
 export function Inspector() {
   const {
     selection, graph, tool,
@@ -30,18 +36,17 @@ export function Inspector() {
       <div className="builder-inspector">
         <div className="builder-inspector-row">
           <label className="builder-inspector-label">Count</label>
-          <div className="builder-count-row">
-            <button
-              className="builder-count-btn"
-              onPointerDown={(e) => { e.preventDefault(); setSelectedCount(node.count - 1); }}
-              disabled={node.count <= 1}
-            >−</button>
-            <span className="builder-count-val font-display">{node.count}</span>
-            <button
-              className="builder-count-btn"
-              onPointerDown={(e) => { e.preventDefault(); setSelectedCount(node.count + 1); }}
-              disabled={node.count >= 9}
-            >+</button>
+          <div className="builder-mode-toggle" style={{ width: '100%' }}>
+            {COUNT_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                className={`builder-mode-btn${node.count === opt.value ? ' builder-mode-btn--active' : ''}`}
+                style={{ flex: 1 }}
+                onPointerDown={(e) => { e.preventDefault(); setSelectedCount(opt.value); }}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="builder-inspector-row">
@@ -74,18 +79,17 @@ export function Inspector() {
       <div className="builder-inspector">
         <div className="builder-inspector-row">
           <label className="builder-inspector-label">Count</label>
-          <div className="builder-count-row">
-            <button
-              className="builder-count-btn"
-              onPointerDown={(e) => { e.preventDefault(); setSelectedCount(edge.count - 1); }}
-              disabled={edge.count <= 1}
-            >−</button>
-            <span className="builder-count-val font-display">{edge.count}</span>
-            <button
-              className="builder-count-btn"
-              onPointerDown={(e) => { e.preventDefault(); setSelectedCount(edge.count + 1); }}
-              disabled={edge.count >= 9}
-            >+</button>
+          <div className="builder-mode-toggle" style={{ width: '100%' }}>
+            {COUNT_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                className={`builder-mode-btn${edge.count === opt.value ? ' builder-mode-btn--active' : ''}`}
+                style={{ flex: 1 }}
+                onPointerDown={(e) => { e.preventDefault(); setSelectedCount(opt.value); }}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="builder-inspector-row">

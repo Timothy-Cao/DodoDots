@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "id": "lvlmo89ax8oxgb",
+  "title": "Level 3",
+  "maxMoves": 5,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      {
+        "id": "nmo89b10b8fg",
+        "x": 0.4,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b1psxhd",
+        "x": 0.3,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b2b392k",
+        "x": 0.4,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b2pj8dx",
+        "x": 0.5,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b3178pt",
+        "x": 0.6,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b3psfik",
+        "x": 0.7,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b423ddk",
+        "x": 0.6,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89b4gk26z",
+        "x": 0.5,
+        "y": 0.2,
+        "count": 1,
+        "startEligible": true
+      }
+    ],
+    "edges": [
+      {
+        "id": "emo89b6jft48",
+        "from": "nmo89b1psxhd",
+        "to": "nmo89b10b8fg",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b6zg33i",
+        "from": "nmo89b10b8fg",
+        "to": "nmo89b4gk26z",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b7eds1f",
+        "from": "nmo89b4gk26z",
+        "to": "nmo89b423ddk",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b7x9wzo",
+        "from": "nmo89b423ddk",
+        "to": "nmo89b3psfik",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b8e5brr",
+        "from": "nmo89b3psfik",
+        "to": "nmo89b3178pt",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b90itpd",
+        "from": "nmo89b3178pt",
+        "to": "nmo89b2b392k",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89b9fpnsg",
+        "from": "nmo89b2b392k",
+        "to": "nmo89b1psxhd",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89ba36yr1",
+        "from": "nmo89b2b392k",
+        "to": "nmo89b2pj8dx",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89bahgq5w",
+        "from": "nmo89b2pj8dx",
+        "to": "nmo89b3178pt",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89bb2izoj",
+        "from": "nmo89b2pj8dx",
+        "to": "nmo89b1psxhd",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89bbmx94u",
+        "from": "nmo89b2pj8dx",
+        "to": "nmo89b10b8fg",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89bc741q5",
+        "from": "nmo89b2pj8dx",
+        "to": "nmo89b423ddk",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89bcw50ak",
+        "from": "nmo89b2pj8dx",
+        "to": "nmo89b3psfik",
+        "count": 2,
+        "direction": "bi"
+      }
+    ]
+  }
+}

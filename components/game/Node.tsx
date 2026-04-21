@@ -149,8 +149,10 @@ export function NodeView({
         <circle
           data-testid="pip"
           cx={cx} cy={cy} r={0.85}
-          fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
-          filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+          fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--bg-deep)'}
+          stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
+          strokeWidth={0.18}
+          filter={filledPips >= 1 ? 'url(#bloom-bright)' : undefined}
           pointerEvents="none"
         />
       )}
@@ -160,16 +162,20 @@ export function NodeView({
           <circle
             data-testid="pip"
             cx={cx - 1} cy={cy} r={0.7}
-            fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
-            filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+            fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--bg-deep)'}
+            stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
+            strokeWidth={0.18}
+            filter={filledPips >= 1 ? 'url(#bloom-bright)' : undefined}
             pointerEvents="none"
           />
           {/* Right pip */}
           <circle
             data-testid="pip"
             cx={cx + 1} cy={cy} r={0.7}
-            fill={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
-            filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+            fill={filledPips >= 2 ? 'var(--neon-green)' : 'var(--bg-deep)'}
+            stroke={filledPips >= 2 ? 'none' : 'var(--cyan)'}
+            strokeWidth={0.18}
+            filter={filledPips >= 2 ? 'url(#bloom-bright)' : undefined}
             pointerEvents="none"
           />
         </>

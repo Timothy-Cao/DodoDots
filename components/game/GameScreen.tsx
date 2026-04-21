@@ -8,6 +8,7 @@ import { HUD } from './HUD';
 import { WinOverlay } from './WinOverlay';
 import { FailOverlay } from './FailOverlay';
 import { ActionBar } from '@/components/ui/ActionBar';
+import { SolverControls } from './SolverControls';
 import { useKeyboardShortcuts } from '@/lib/keyboard';
 import { getNode } from '@/lib/graph';
 import type { Graph, Mode } from '@/lib/graph';
@@ -15,7 +16,7 @@ import { shareResult } from '@/lib/share';
 import { unlockAudio } from '@/lib/sfx';
 
 export function GameScreen({
-  graph, maxMoves, title, onWin, onFail, onNext, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose',
+  graph, maxMoves, title, onWin, onFail, onNext, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose', showSolverControls = false,
 }: {
   graph: Graph;
   maxMoves: number;
@@ -27,6 +28,7 @@ export function GameScreen({
   hideWinOverlay?: boolean;
   shareData?: { date: string };
   mode?: Mode;
+  showSolverControls?: boolean;
 }) {
   const router = useRouter();
   const { state, load, dispatch, undo, resetGame, lastCommit, clearLastCommit, history } = useGameStore();
@@ -34,6 +36,17 @@ export function GameScreen({
   const [pulses, setPulses] = useState<PulseEntry[]>([]);
   const [showWinOverlay, setShowWinOverlay] = useState(false);
   const [showFailOverlay, setShowFailOverlay] = useState(false);
+  const [demoTimeouts, setDemoTimeouts] = useState<ReturnType<typeof setTimeout>[]>([]);
+  const demoActive = demoTimeouts.length > 0;
+
+  const clearDemo = useCallback(() => {
+    setDemoTimeouts(prev => {
+      prev.forEach(clearTimeout);
+      return [];
+    });
+  }, []);
+
+  useEffect(() => () => clearDemo(), [clearDemo]);
 
   useEffect(() => { load(graph, maxMoves, mode); }, [graph, maxMoves, mode, load]);
 
@@ -77,10 +90,28 @@ export function GameScreen({
   }, []);
 
   const handleReset = useCallback(() => {
+    clearDemo();
     dispatch({ type: 'reset' });
     setShowWinOverlay(false);
     setShowFailOverlay(false);
-  }, [dispatch]);
+  }, [dispatch, clearDemo]);
+
+  const runDemo = useCallback((walk: string[]) => {
+    clearDemo();
+    setShowWinOverlay(false);
+    setShowFailOverlay(false);
+    dispatch({ type: 'reset' });
+    const DELAY = 250;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    walk.forEach((nodeId, i) => {
+      timeouts.push(setTimeout(() => {
+        if (i === 0) dispatch({ type: 'latch', nodeId });
+        else dispatch({ type: 'traverse', nodeId });
+        if (i === walk.length - 1) setDemoTimeouts([]);
+      }, DELAY * (i + 1)));
+    });
+    setDemoTimeouts(timeouts);
+  }, [dispatch, clearDemo]);
 
   useKeyboardShortcuts({
     r: handleReset,
@@ -133,6 +164,14 @@ export function GameScreen({
         onReset={handleReset}
         onMenu={() => router.push(menuHref)}
       />
+      {showSolverControls && (
+        <SolverControls
+          initialGraph={graph}
+          onDemo={runDemo}
+          onStopDemo={clearDemo}
+          demoActive={demoActive}
+        />
+      )}
       {!hideWinOverlay && showWinOverlay && state.phase === 'won' && (
         <WinOverlay
           movesUsed={movesUsed}

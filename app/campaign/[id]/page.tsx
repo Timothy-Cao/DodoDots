@@ -31,6 +31,7 @@ export default function CampaignPlayPage() {
       onWin={onWin}
       menuHref="/campaign"
       onNext={next ? () => router.push(`/campaign/${next.id}`) : undefined}
+      showSolverControls
     />
   );
 }

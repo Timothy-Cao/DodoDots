@@ -44,6 +44,7 @@ export default function PlaytestPage() {
       mode={level.mode}
       title={level.title.toUpperCase() || 'PLAYTEST'}
       menuHref={`/builder/${id}`}
+      showSolverControls
     />
   );
 }

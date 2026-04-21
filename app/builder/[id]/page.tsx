@@ -65,14 +65,15 @@ export default function BuilderEditorPage() {
         case 'n': store.setTool('node'); break;
         case 'e': store.setTool('edge'); break;
         case 's': store.toggleSelectedStart(); break;
-        case 'd': store.cycleEdgeDirection(); break;
+        case 't': store.cycleEdgeDirection(); break;
+        case 'd':
         case 'delete':
         case 'backspace': store.deleteSelected(); break;
         case 'escape': router.push('/builder'); break;
-        default:
-          if (e.key >= '1' && e.key <= '9') {
-            store.setSelectedCount(parseInt(e.key, 10));
-          }
+        case '1':
+        case '2':
+        case '3':
+          store.setSelectedCount(parseInt(e.key, 10));
           break;
       }
     };

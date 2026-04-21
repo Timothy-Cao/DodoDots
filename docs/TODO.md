@@ -52,6 +52,10 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 
 ### Done in 2026-04-20 polish + retention pass (recap)
 
+- [x] 2026-04-20 — **Strict mode is now default** — every node AND every edge counter must reach exactly 0; edges lock at 0 just like nodes. `loose` mode (counters can go below 0; only nodes lock) still selectable per-level via the builder. Tutorial 3 rewritten as a "loop back" puzzle solvable in strict mode (a→b→c→d→b on a kite topology — no edge re-traversal).
+- [x] 2026-04-20 — **Pip visibility before first visit** — pending node pips render as `bg-deep` filled with cyan stroke, so they read as cyan circles cut into the grey node face. Counts are visible at a glance even before any traversal.
+- [x] 2026-04-20 — **Level builder** — `/builder` (draft list), `/builder/[id]` (editor with grid-snap, tool tabs, inspector, mode toggle), `/builder/[id]/playtest` (test in place). Drafts auto-save to localStorage; export to formatted JSON via the Export sheet. **No Supabase / no publishing** — text export is the share mechanism for now.
+- [x] 2026-04-20 — **Stuck-state detection** — `findUnreachableEdge` AND `hasNoValidMoves(graph, current, mode)` together catch every losing position. In strict mode, locked edges also count as "no move available."
 - [x] 2026-04-20 — **Auto-curve overlapping edges** — `lib/layout.ts` computes signed curvature per edge from segment crossings (away-from-other-midpoint heuristic) and small-angle fan-outs from shared nodes (< ~25.8°). `Edge.tsx` renders bezier `<path>` when curvature ≠ 0; tick marks placed on the curve via `bezierPoint`/`bezierTangent`. CSS animations extended to both `line` and `path` selectors. **Curved + directed arrows still TODO** (generator only emits bidirectional today).
 
 - [x] 2026-04-20 — **Placement no longer pins nodes to corners** — Lloyd-ish spring relaxation around `MIN_DIST*1.5`. Verified: each generated puzzle now has interior nodes.

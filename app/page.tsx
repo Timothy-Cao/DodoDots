@@ -11,7 +11,7 @@ export default function Home() {
       <Link href="/daily" prefetch><button>Daily</button></Link>
       <Link href="/tutorial" prefetch><button>Tutorial</button></Link>
       <button disabled>Campaign · soon</button>
-      <button disabled>Builder · soon</button>
+      <Link href="/builder" prefetch><button>Builder</button></Link>
       <SolvedCalendar />
     </MenuLayout>
   );

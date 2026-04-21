@@ -33,7 +33,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   id: '',
   title: 'Untitled',
   maxMoves: 5,
-  mode: 'loose',
+  mode: 'strict',
   graph: { nodes: [], edges: [] },
   tool: 'select',
   selection: null,

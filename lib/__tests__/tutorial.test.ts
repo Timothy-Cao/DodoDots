@@ -7,7 +7,7 @@ import { isSolved } from '../graph';
 const SOLUTIONS: Record<string, string[]> = {
   '01-click': ['a', 'b'],
   '02-path': ['a', 'b', 'c', 'd'],
-  '03-revisit': ['a', 'b', 'c', 'b', 'd'],
+  '03-revisit': ['a', 'b', 'c', 'd', 'b'],
   '04-puzzle': ['a', 'b', 'c', 'd', 'b', 'e'],
 };
 

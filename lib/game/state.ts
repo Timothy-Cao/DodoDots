@@ -20,7 +20,7 @@ export type GameState = {
   mode: Mode;
 };
 
-export function initGame(graph: Graph, maxMoves: number, mode: Mode = 'loose'): GameState {
+export function initGame(graph: Graph, maxMoves: number, mode: Mode = 'strict'): GameState {
   return {
     graph: structuredClone(graph),
     initialGraph: structuredClone(graph),
@@ -55,7 +55,7 @@ export function reduce(s: GameState, a: GameAction): GameState {
       if (isSolved(graph)) return { ...next, phase: 'won' };
       const unreachableEdgeId = findUnreachableEdge(graph);
       if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId }, failedEdge: unreachableEdgeId };
-      if (next.current && hasNoValidMoves(graph, next.current)) {
+      if (next.current && hasNoValidMoves(graph, next.current, s.mode)) {
         return { ...next, phase: 'failed', failReason: { type: 'stuck' } };
       }
       return next;
@@ -87,7 +87,7 @@ export function reduce(s: GameState, a: GameAction): GameState {
       if (isSolved(graph)) return { ...next, phase: 'won' };
       const unreachableEdgeId = findUnreachableEdge(graph);
       if (unreachableEdgeId) return { ...next, phase: 'failed', failReason: { type: 'unreachable_edge', edgeId: unreachableEdgeId }, failedEdge: unreachableEdgeId };
-      if (next.current && hasNoValidMoves(graph, next.current)) {
+      if (next.current && hasNoValidMoves(graph, next.current, s.mode)) {
         return { ...next, phase: 'failed', failReason: { type: 'stuck' } };
       }
       return next;

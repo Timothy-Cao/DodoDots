@@ -54,7 +54,8 @@ describe('reduce/traverse', () => {
       ],
       edges: [{ id: 'e1', from: 'a', to: 'b', count: 1, direction: 'bi' }],
     };
-    let s = initGame(g, 1);
+    // Use loose mode — strict mode would fail with stuck (only neighbor reachable via locked edge)
+    let s = initGame(g, 1, 'loose');
     s = reduce(s, { type: 'latch', nodeId: 'a' });
     s = reduce(s, { type: 'traverse', nodeId: 'b' });
     // movesRemaining is now 0 (or negative) but game is not failed — only unreachable edge fails

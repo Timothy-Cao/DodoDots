@@ -36,7 +36,7 @@ export function newDraft(id: string): Level {
     id,
     title: 'Untitled',
     maxMoves: 5,
-    mode: 'loose',
+    mode: 'strict',
     graph: { nodes: [], edges: [] },
   };
 }

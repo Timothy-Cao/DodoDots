@@ -122,7 +122,7 @@ export function EdgeView({
           d={pathD!}
           fill="none"
           stroke={strokeColor}
-          strokeWidth={snap ? 1.0 : (bright ? 0.7 : 1.0)}
+          strokeWidth={done ? 1.3 : (snap ? 1.2 : 1.0)}
           strokeDasharray={snap ? '2 1' : undefined}
           filter={bright ? 'url(#bloom-bright)' : undefined}
         />
@@ -130,7 +130,7 @@ export function EdgeView({
         <line
           x1={x1} y1={y1} x2={x2} y2={y2}
           stroke={strokeColor}
-          strokeWidth={snap ? 1.0 : (bright ? 0.7 : 1.0)}
+          strokeWidth={done ? 1.3 : (snap ? 1.2 : 1.0)}
           strokeDasharray={snap ? '2 1' : undefined}
           filter={bright ? 'url(#bloom-bright)' : undefined}
         />

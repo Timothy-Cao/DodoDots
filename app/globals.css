@@ -108,8 +108,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   50% { filter: url(#bloom-bright); transform: scale(1.15); transform-origin: center; transform-box: fill-box; }
 }
 @keyframes win-wave-edge {
-  0%,100% { stroke-width: 0.7; }
-  50% { stroke-width: 1.2; }
+  0%,100% { stroke-width: 1.3; }
+  50% { stroke-width: 1.9; }
 }
 
 /* Change 3: commit pulse */

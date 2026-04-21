@@ -70,7 +70,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .node--snap circle { animation: node-pulse 0.7s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
 /* Snap edge: cyan dashed "marching ants" — distinct from done (neon-green solid) */
-.edge--snap line { stroke: var(--cyan) !important; }
+.edge--snap line, .edge--snap path { stroke: var(--cyan) !important; }
 .edge--snap polygon { fill: var(--cyan) !important; }
 
 @keyframes snap-halo-pulse {
@@ -87,13 +87,13 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   0% { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: -6; }
 }
-.edge--snap line { animation: snap-edge-march 0.8s linear infinite; }
+.edge--snap line, .edge--snap path { animation: snap-edge-march 0.8s linear infinite; }
 
 /* Change 1: pips handled via SVG circles with data-testid="pip" */
 
 /* Change 4: path breadcrumb */
 .node--recent circle:first-child { stroke: var(--cyan); stroke-width: 0.4; stroke-opacity: 0.5; }
-.edge--recent line { stroke: color-mix(in srgb, var(--cyan) 40%, var(--dim) 60%) !important; }
+.edge--recent line, .edge--recent path { stroke: color-mix(in srgb, var(--cyan) 40%, var(--dim) 60%) !important; }
 
 /* Change 6: stronger idle hierarchy */
 .node--dim { opacity: 0.4; }
@@ -101,7 +101,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Change 5 / Change 8: win cascade */
 .cascade-pulse circle, .node--winwave circle { animation: win-wave 300ms ease-out both; transform-origin: center; transform-box: fill-box; }
-.edge--winwave line { animation: win-wave-edge 300ms ease-out both; }
+.edge--winwave line, .edge--winwave path { animation: win-wave-edge 300ms ease-out both; }
 @keyframes win-wave {
   0%,100% { filter: url(#bloom-bright); }
   50% { filter: url(#bloom-bright); transform: scale(1.15); transform-origin: center; transform-box: fill-box; }
@@ -118,7 +118,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
 /* Change 8: fail flash */
-.edge--fail-flash line { animation: fail-flash 800ms ease-out both; stroke: var(--danger) !important; }
+.edge--fail-flash line, .edge--fail-flash path { animation: fail-flash 800ms ease-out both; stroke: var(--danger) !important; }
 @keyframes fail-flash {
   0%, 70% { stroke-width: 1; filter: url(#bloom-bright); opacity: 1; }
   100% { stroke-width: 0.5; opacity: 0.6; }
@@ -145,12 +145,12 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
 /* Change 5: edge flash and failed edge */
-.edge--flash line { animation: edge-flash 180ms ease-out; }
+.edge--flash line, .edge--flash path { animation: edge-flash 180ms ease-out; }
 @keyframes edge-flash {
   0% { filter: url(#bloom-bright); stroke-width: 1.2; }
   100% { }
 }
-.edge--failed line { stroke: var(--danger) !important; animation: edge-fail 700ms ease-in-out infinite; }
+.edge--failed line, .edge--failed path { stroke: var(--danger) !important; animation: edge-fail 700ms ease-in-out infinite; }
 @keyframes edge-fail {
   0%,100% { opacity: 1; }
   50% { opacity: 0.4; }

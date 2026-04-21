@@ -1,0 +1,300 @@
+{
+  "version": 1,
+  "id": "lvlmo8b5c0hjzu",
+  "title": "Level 6",
+  "maxMoves": 5,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      {
+        "id": "nmo8b5g4whwy",
+        "x": 0.2,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b5idjn0l",
+        "x": 0.8,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b5kg6zoz",
+        "x": 0.4,
+        "y": 0.2,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b5ko9w67",
+        "x": 0.4,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b5l0ccnj",
+        "x": 0.6,
+        "y": 0.2,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b5l75xgz",
+        "x": 0.6,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b5lq8uca",
+        "x": 0.4,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b5lx2gb5",
+        "x": 0.6,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b62i2th2",
+        "x": 0.1,
+        "y": 0.2,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b63w4ybh",
+        "x": 0.1,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b672puf6",
+        "x": 0.9,
+        "y": 0.2,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b67dhepm",
+        "x": 0.9,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": false
+      },
+      {
+        "id": "nmo8b7api0ht",
+        "x": 0.2,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8b7b92hrp",
+        "x": 0.8,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": false
+      }
+    ],
+    "edges": [
+      {
+        "id": "emo8b695kgoq",
+        "from": "nmo8b62i2th2",
+        "to": "nmo8b63w4ybh",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6aejf2n",
+        "from": "nmo8b5g4whwy",
+        "to": "nmo8b62i2th2",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6b48qha",
+        "from": "nmo8b5idjn0l",
+        "to": "nmo8b672puf6",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6bhepm6",
+        "from": "nmo8b672puf6",
+        "to": "nmo8b67dhepm",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6dg214x",
+        "from": "nmo8b5kg6zoz",
+        "to": "nmo8b5l0ccnj",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6dtphyu",
+        "from": "nmo8b5l0ccnj",
+        "to": "nmo8b5l75xgz",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6e8mc6w",
+        "from": "nmo8b5l75xgz",
+        "to": "nmo8b5ko9w67",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6ej5g97",
+        "from": "nmo8b5ko9w67",
+        "to": "nmo8b5kg6zoz",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6fou1o0",
+        "from": "nmo8b5lq8uca",
+        "to": "nmo8b5ko9w67",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6gbgg4e",
+        "from": "nmo8b5l75xgz",
+        "to": "nmo8b5lx2gb5",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6gr18mb",
+        "from": "nmo8b5lx2gb5",
+        "to": "nmo8b5lq8uca",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6jxeyqt",
+        "from": "nmo8b5g4whwy",
+        "to": "nmo8b5kg6zoz",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6ko7zmo",
+        "from": "nmo8b5l0ccnj",
+        "to": "nmo8b5idjn0l",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6n7x8oq",
+        "from": "nmo8b5ko9w67",
+        "to": "nmo8b62i2th2",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b6o47owi",
+        "from": "nmo8b5l75xgz",
+        "to": "nmo8b672puf6",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7e8lzdo",
+        "from": "nmo8b63w4ybh",
+        "to": "nmo8b7api0ht",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7eoleu5",
+        "from": "nmo8b7api0ht",
+        "to": "nmo8b5g4whwy",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7feynvi",
+        "from": "nmo8b7b92hrp",
+        "to": "nmo8b67dhepm",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7fzem2o",
+        "from": "nmo8b7b92hrp",
+        "to": "nmo8b5idjn0l",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7igaaf2",
+        "from": "nmo8b67dhepm",
+        "to": "nmo8b5l0ccnj",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7j8ecih",
+        "from": "nmo8b63w4ybh",
+        "to": "nmo8b5kg6zoz",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7l5ikl9",
+        "from": "nmo8b63w4ybh",
+        "to": "nmo8b5lq8uca",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7m00ojq",
+        "from": "nmo8b5lx2gb5",
+        "to": "nmo8b67dhepm",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7sf5ii6",
+        "from": "nmo8b62i2th2",
+        "to": "nmo8b7api0ht",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b7tdect2",
+        "from": "nmo8b672puf6",
+        "to": "nmo8b7b92hrp",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b888jg8m",
+        "from": "nmo8b5g4whwy",
+        "to": "nmo8b5lq8uca",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8b89j3cx8",
+        "from": "nmo8b5idjn0l",
+        "to": "nmo8b5lx2gb5",
+        "count": 1,
+        "direction": "bi"
+      }
+    ]
+  }
+}

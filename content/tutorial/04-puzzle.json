@@ -1,7 +1,7 @@
 {
   "id": "04-puzzle",
   "title": "Think ahead",
-  "caption": "Don't get stranded. Plan your route.",
+  "caption": "Don't strand yourself — once a dot is cleared, you can't return to it.",
   "maxMoves": 5,
   "graph": {
     "nodes": [

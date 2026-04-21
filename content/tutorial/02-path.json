@@ -1,7 +1,7 @@
 {
   "id": "02-path",
   "title": "Trace the path",
-  "caption": "Clear every dot and every line.",
+  "caption": "Trace through every dot and every line.",
   "maxMoves": 3,
   "graph": {
     "nodes": [

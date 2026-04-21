@@ -1,7 +1,7 @@
 {
   "id": "03-revisit",
   "title": "Visit twice",
-  "caption": "Two pips means you must pass through twice.",
+  "caption": "Two pips means two visits needed. Plan to come back.",
   "maxMoves": 4,
   "graph": {
     "nodes": [

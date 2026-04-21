@@ -1,7 +1,7 @@
 {
   "id": "01-click",
   "title": "First move",
-  "caption": "Tap the glowing dot, then tap its neighbor.",
+  "caption": "Tap a glowing dot. Then tap a connected one. Each mark is one tap to clear.",
   "maxMoves": 1,
   "graph": {
     "nodes": [

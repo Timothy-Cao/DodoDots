@@ -90,7 +90,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .edge--snap line, .edge--snap path { animation: snap-edge-march 0.8s linear infinite; }
 
-/* Change 1: pips handled via SVG circles with data-testid="pip" */
+/* Edges use parallel sub-lines; nodes use concentric rings */
 
 /* Change 4: path breadcrumb */
 .node--recent circle:first-child { stroke: var(--cyan); stroke-width: 0.4; stroke-opacity: 0.5; }

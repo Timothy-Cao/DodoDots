@@ -41,11 +41,14 @@ export default function TutorialPage() {
       <div className="tutorial-caption" aria-live="polite">
         <p>{level.caption}</p>
         {showNext && (
-          <button
-            onPointerDown={(e) => { e.preventDefault(); next(); }}
-          >
-            {isLast ? 'Finish' : 'Next →'}
-          </button>
+          <>
+            <p className="tutorial-complete">✓ COMPLETE</p>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); next(); }}
+            >
+              {isLast ? 'Finish' : 'Next →'}
+            </button>
+          </>
         )}
       </div>
     </div>

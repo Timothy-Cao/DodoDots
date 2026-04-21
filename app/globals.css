@@ -287,3 +287,11 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .tutorial-caption p { margin: 0; color: #c9d3e3; font-size: 14px; }
 .tutorial-caption button { margin-top: 10px; }
+.tutorial-caption p.tutorial-complete {
+  margin: 12px 0 0 0;
+  color: var(--neon-green);
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 10px rgba(57, 255, 142, 0.6);
+}

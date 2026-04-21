@@ -5,7 +5,7 @@ import { CAMPAIGN } from '@/lib/campaign';
 import { MenuLayout } from '@/components/ui/MenuLayout';
 import { storage } from '@/lib/storage';
 
-const TOTAL_SLOTS = 30;
+const TOTAL_SLOTS = 25;
 
 export default function CampaignListPage() {
   const [progress, setProgress] = useState<Record<string, { solved: boolean; bestMoves: number }>>({});

@@ -1,0 +1,20 @@
+{
+  "id": "03-multi",
+  "title": "Doubles and triples",
+  "caption": "Some edges have 2 or 3 marks — trace them that many times. Start on a glowing dot.",
+  "maxMoves": 7,
+  "graph": {
+    "nodes": [
+      { "id": "a", "x": 0.3,  "y": 0.35, "count": 1, "startEligible": false },
+      { "id": "b", "x": 0.7,  "y": 0.35, "count": 1, "startEligible": false },
+      { "id": "c", "x": 0.7,  "y": 0.65, "count": 1, "startEligible": true  },
+      { "id": "d", "x": 0.3,  "y": 0.65, "count": 1, "startEligible": true  }
+    ],
+    "edges": [
+      { "id": "ab", "from": "a", "to": "b", "count": 1, "direction": "bi" },
+      { "id": "bc", "from": "b", "to": "c", "count": 1, "direction": "bi" },
+      { "id": "cd", "from": "c", "to": "d", "count": 2, "direction": "bi" },
+      { "id": "da", "from": "d", "to": "a", "count": 3, "direction": "bi" }
+    ]
+  }
+}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Orbitron, Inter } from 'next/font/google';
 import './globals.css';
 import { ServiceWorkerRegistrar } from '@/components/ui/ServiceWorkerRegistrar';
+import { GlobalChrome } from '@/components/ui/GlobalChrome';
 
 const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-display' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${orbitron.variable} ${inter.variable}`}>
       <body>
         <ServiceWorkerRegistrar />
+        <GlobalChrome />
         {children}
       </body>
     </html>

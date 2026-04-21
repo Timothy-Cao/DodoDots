@@ -3,7 +3,7 @@ export function HUD({ title, movesUsed, optimalMoves }: { title: string; movesUs
   return (
     <div style={{
       position: 'absolute',
-      top: 'calc(12px + env(safe-area-inset-top))',
+      top: 'calc(36px + env(safe-area-inset-top))',
       left: 0,
       right: 0,
       display: 'flex',

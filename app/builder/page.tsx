@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { MenuLayout } from '@/components/ui/MenuLayout';
 import { storage } from '@/lib/storage';
-import { newDraft, type Level } from '@/lib/level-format';
+import { newDraft, uniqueTitle, type Level } from '@/lib/level-format';
 
 const PAGE_SIZE = 10;
 
@@ -43,7 +43,9 @@ export default function BuilderListPage() {
 
   const handleNew = () => {
     const id = `lvl${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
-    const draft = newDraft(id);
+    const existingTitles = drafts.map(d => d.title ?? 'Untitled');
+    const title = uniqueTitle('Untitled', existingTitles);
+    const draft = newDraft(id, title);
     storage.setDraft(id, draft);
     router.push(`/builder/${id}`);
   };

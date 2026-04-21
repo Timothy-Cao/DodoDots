@@ -41,13 +41,29 @@ export function parseLevel(text: string): { ok: true; level: Level } | { ok: fal
   }
 }
 
-export function newDraft(id: string): Level {
+export function newDraft(id: string, title = 'Untitled'): Level {
   return {
     version: 1,
     id,
-    title: 'Untitled',
+    title,
     maxMoves: 5,
     mode: 'strict',
     graph: { nodes: [], edges: [] },
   };
+}
+
+/**
+ * Given a desired base title and a collection of existing titles, returns
+ * the same title if unused, otherwise appends the smallest positive integer
+ * suffix that makes it unique ("Untitled 2", "Untitled 3", …).
+ */
+export function uniqueTitle(base: string, existing: Iterable<string>): string {
+  const taken = new Set<string>();
+  for (const t of existing) if (t) taken.add(t.trim());
+  if (!taken.has(base.trim())) return base;
+  for (let n = 2; n < 10_000; n++) {
+    const candidate = `${base} ${n}`;
+    if (!taken.has(candidate.trim())) return candidate;
+  }
+  return `${base} ${Date.now()}`;
 }

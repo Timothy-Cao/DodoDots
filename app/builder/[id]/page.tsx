@@ -9,7 +9,7 @@ import { LevelSettings } from '@/components/builder/LevelSettings';
 import { ExportSheet } from '@/components/builder/ExportSheet';
 import { BuilderActionBar } from '@/components/ui/BuilderActionBar';
 import { storage } from '@/lib/storage';
-import { newDraft } from '@/lib/level-format';
+import { newDraft, uniqueTitle, type Level } from '@/lib/level-format';
 
 export default function BuilderEditorPage() {
   const router = useRouter();
@@ -21,12 +21,13 @@ export default function BuilderEditorPage() {
   // Load draft on mount
   useEffect(() => {
     if (!id) return;
-    const raw = storage.getDrafts() as Record<string, unknown>;
+    const raw = storage.getDrafts() as Record<string, Level>;
     const existing = raw[id];
     if (existing) {
       store.loadFromLevel(existing as Parameters<typeof store.loadFromLevel>[0]);
     } else {
-      const draft = newDraft(id);
+      const titles = Object.values(raw).filter(Boolean).map(d => d?.title ?? 'Untitled');
+      const draft = newDraft(id, uniqueTitle('Untitled', titles));
       storage.setDraft(id, draft);
       store.loadFromLevel(draft);
     }

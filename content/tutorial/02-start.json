@@ -1,0 +1,22 @@
+{
+  "id": "02-start",
+  "title": "Pick a start",
+  "caption": "Some puzzles allow more than one starting point. Either glowing dot works — try to trace every edge exactly once.",
+  "maxMoves": 5,
+  "graph": {
+    "nodes": [
+      { "id": "a", "x": 0.3,  "y": 0.35, "count": 1, "startEligible": false },
+      { "id": "b", "x": 0.55, "y": 0.35, "count": 1, "startEligible": true },
+      { "id": "c", "x": 0.55, "y": 0.65, "count": 1, "startEligible": false },
+      { "id": "d", "x": 0.3,  "y": 0.65, "count": 1, "startEligible": false },
+      { "id": "e", "x": 0.8,  "y": 0.35, "count": 1, "startEligible": true }
+    ],
+    "edges": [
+      { "id": "ab", "from": "a", "to": "b", "count": 1, "direction": "bi" },
+      { "id": "bc", "from": "b", "to": "c", "count": 1, "direction": "bi" },
+      { "id": "cd", "from": "c", "to": "d", "count": 1, "direction": "bi" },
+      { "id": "da", "from": "d", "to": "a", "count": 1, "direction": "bi" },
+      { "id": "be", "from": "b", "to": "e", "count": 1, "direction": "bi" }
+    ]
+  }
+}

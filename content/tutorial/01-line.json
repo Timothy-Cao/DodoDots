@@ -1,0 +1,17 @@
+{
+  "id": "01-line",
+  "title": "Trace the line",
+  "caption": "Tap the glowing dot to start, then follow the line. Each edge must be traced once.",
+  "maxMoves": 2,
+  "graph": {
+    "nodes": [
+      { "id": "a", "x": 0.25, "y": 0.5, "count": 1, "startEligible": true },
+      { "id": "b", "x": 0.5,  "y": 0.5, "count": 1, "startEligible": false },
+      { "id": "c", "x": 0.75, "y": 0.5, "count": 1, "startEligible": false }
+    ],
+    "edges": [
+      { "id": "ab", "from": "a", "to": "b", "count": 1, "direction": "bi" },
+      { "id": "bc", "from": "b", "to": "c", "count": 1, "direction": "bi" }
+    ]
+  }
+}

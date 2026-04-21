@@ -36,7 +36,7 @@ type Voice = {
   peakGain?: number;  // 0..1
 };
 
-export type SfxName = 'latch' | 'traverse' | 'complete' | 'win' | 'fail' | 'undo' | 'invalid';
+export type SfxName = 'latch' | 'traverse' | 'complete' | 'win' | 'winloop' | 'fail' | 'undo' | 'invalid';
 
 const VOICES: Record<SfxName, Voice | Voice[]> = {
   latch: { type: 'sine', freqStart: 220, freqEnd: 180, durationMs: 180, attackMs: 5, decayMs: 160, peakGain: 0.5 },
@@ -46,6 +46,11 @@ const VOICES: Record<SfxName, Voice | Voice[]> = {
     { type: 'sine', freqStart: 523, durationMs: 400, attackMs: 10, decayMs: 380, peakGain: 0.3 },      // C5
     { type: 'sine', freqStart: 659, durationMs: 400, attackMs: 80, decayMs: 320, peakGain: 0.3 },      // E5
     { type: 'sine', freqStart: 784, durationMs: 400, attackMs: 160, decayMs: 240, peakGain: 0.3 },     // G5
+  ],
+  // Soft recurring chime to accompany the looping win cascade
+  winloop: [
+    { type: 'sine', freqStart: 784, durationMs: 300, attackMs: 20, decayMs: 280, peakGain: 0.14 },     // G5
+    { type: 'sine', freqStart: 1047, durationMs: 300, attackMs: 60, decayMs: 240, peakGain: 0.1 },     // C6
   ],
   fail: { type: 'triangle', freqStart: 220, freqEnd: 140, durationMs: 350, attackMs: 5, decayMs: 340, peakGain: 0.45 },
   undo: { type: 'sine', freqStart: 660, freqEnd: 440, durationMs: 110, attackMs: 3, decayMs: 100, peakGain: 0.35 },

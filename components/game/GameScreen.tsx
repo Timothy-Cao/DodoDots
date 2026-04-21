@@ -13,7 +13,7 @@ import { useKeyboardShortcuts } from '@/lib/keyboard';
 import { getNode } from '@/lib/graph';
 import type { Graph, Mode } from '@/lib/graph';
 import { shareResult } from '@/lib/share';
-import { unlockAudio } from '@/lib/sfx';
+import { unlockAudio, playSfx } from '@/lib/sfx';
 
 export function GameScreen({
   graph, maxMoves, title, onWin, onFail, onNext, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose', showSolverControls = false,
@@ -63,6 +63,14 @@ export function GameScreen({
       setShowWinOverlay(false);
       setShowFailOverlay(false);
     }
+  }, [state?.phase]);
+
+  // Looping win chime: plays every 2.4s while SOLVED stays on screen, matching
+  // the CSS cascade loop. First chime is offset so it hits on the second pulse.
+  useEffect(() => {
+    if (state?.phase !== 'won') return;
+    const id = window.setInterval(() => playSfx('winloop'), 2400);
+    return () => window.clearInterval(id);
   }, [state?.phase]);
 
   useEffect(() => {

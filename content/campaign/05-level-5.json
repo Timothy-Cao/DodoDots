@@ -1,0 +1,258 @@
+{
+  "version": 1,
+  "id": "lvlmo8av57dgeh",
+  "title": "Level 5",
+  "maxMoves": 5,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      {
+        "id": "nmo8av8q0k7r",
+        "x": 0.3,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8av9puq88",
+        "x": 0.8,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avatbbpe",
+        "x": 0.2,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avbma4yl",
+        "x": 0.2,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avbs7cgj",
+        "x": 0.3,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avc80g65",
+        "x": 0.7,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avcf9mjp",
+        "x": 0.8,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8avcq8e23",
+        "x": 0.7,
+        "y": 0.4,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8awmryo63",
+        "x": 0.4,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8awni2sjf",
+        "x": 0.6,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8awnpre4o",
+        "x": 0.5,
+        "y": 0.3,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8awo6mljn",
+        "x": 0.5,
+        "y": 0.7,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8awohnevo",
+        "x": 0.4,
+        "y": 0.9,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo8aworxvph",
+        "x": 0.6,
+        "y": 0.9,
+        "count": 1,
+        "startEligible": true
+      }
+    ],
+    "edges": [
+      {
+        "id": "emo8awff5kws",
+        "from": "nmo8avatbbpe",
+        "to": "nmo8av8q0k7r",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awg4u7gx",
+        "from": "nmo8avatbbpe",
+        "to": "nmo8avbma4yl",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awgk05jl",
+        "from": "nmo8avbma4yl",
+        "to": "nmo8avbs7cgj",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awgx6mvb",
+        "from": "nmo8avbs7cgj",
+        "to": "nmo8av8q0k7r",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awhnq2z7",
+        "from": "nmo8avcq8e23",
+        "to": "nmo8avc80g65",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awi6663l",
+        "from": "nmo8avc80g65",
+        "to": "nmo8avcf9mjp",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awiknv83",
+        "from": "nmo8avcf9mjp",
+        "to": "nmo8av9puq88",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awixelei",
+        "from": "nmo8av9puq88",
+        "to": "nmo8avcq8e23",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awpramxt",
+        "from": "nmo8awohnevo",
+        "to": "nmo8awo6mljn",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awq2q852",
+        "from": "nmo8awo6mljn",
+        "to": "nmo8aworxvph",
+        "count": 3,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awqgsmos",
+        "from": "nmo8aworxvph",
+        "to": "nmo8awohnevo",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awr4ioex",
+        "from": "nmo8awnpre4o",
+        "to": "nmo8awmryo63",
+        "count": 3,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awrhft3z",
+        "from": "nmo8awmryo63",
+        "to": "nmo8awni2sjf",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awrtx1bi",
+        "from": "nmo8awni2sjf",
+        "to": "nmo8awnpre4o",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awua8foz",
+        "from": "nmo8av8q0k7r",
+        "to": "nmo8awmryo63",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awv5n5a5",
+        "from": "nmo8awni2sjf",
+        "to": "nmo8avcq8e23",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awwbbqnw",
+        "from": "nmo8awohnevo",
+        "to": "nmo8avbs7cgj",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awx1hgml",
+        "from": "nmo8aworxvph",
+        "to": "nmo8avc80g65",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8awxo2c5e",
+        "from": "nmo8awo6mljn",
+        "to": "nmo8awnpre4o",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8ay8piwbl",
+        "from": "nmo8avbma4yl",
+        "to": "nmo8av8q0k7r",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8ay9lcvpg",
+        "from": "nmo8avcq8e23",
+        "to": "nmo8avcf9mjp",
+        "count": 2,
+        "direction": "bi"
+      }
+    ]
+  }
+}

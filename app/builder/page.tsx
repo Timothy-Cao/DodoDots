@@ -5,7 +5,7 @@ import { MenuLayout } from '@/components/ui/MenuLayout';
 import { storage } from '@/lib/storage';
 import { newDraft, type Level } from '@/lib/level-format';
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 type Ctx = { x: number; y: number; draftId: string } | null;
 

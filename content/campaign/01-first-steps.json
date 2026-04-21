@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "id": "01-first-steps",
+  "title": "First Steps",
+  "maxMoves": 1,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      { "id": "a", "x": 0.3, "y": 0.5, "count": 1, "startEligible": true },
+      { "id": "b", "x": 0.7, "y": 0.5, "count": 1, "startEligible": false }
+    ],
+    "edges": [
+      { "id": "ab", "from": "a", "to": "b", "count": 1, "direction": "bi" }
+    ]
+  }
+}

@@ -37,7 +37,7 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 
 - [ ] **Undo visual feedback** — when you press `Z`, briefly flash the "undone" node/edge in cyan so the player sees what happened.
 - [ ] **Redo (`Shift+Z` or `Y`)** — if we tracked history, we can trivially track a redo stack too.
-- [ ] **Graph fit-to-viewport.** Right now the SVG viewBox is 0–100 and nodes live in 0.1–0.9. If a puzzle happens to cluster to one corner (generator edge case), wasted space is ugly. Auto-pan/zoom or tighter bounding.
+- [x] 2026-04-20 — **Graph fit-to-viewport** — dynamic viewBox now matches container aspect ratio via ResizeObserver in `GameBoard.tsx`. Nodes project to full play area on both portrait and landscape.
 - [ ] **Puzzle thumbnail on win overlay** — show the solved graph inline under "SOLVED" instead of just the text. Great for screenshots/sharing.
 
 ### Generator quality
@@ -49,6 +49,19 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 ---
 
 ## P2 — Nice to have
+
+### Done in 2026-04-20 polish + retention pass (recap)
+
+- [x] 2026-04-20 — **Placement no longer pins nodes to corners** — Lloyd-ish spring relaxation around `MIN_DIST*1.5`. Verified: each generated puzzle now has interior nodes.
+- [x] 2026-04-20 — **Snap visual is distinct from done** — snap target is cyan (not green) with dashed pulsing halo on nodes and a "chasing ants" stroke-dashoffset animation on edges.
+- [x] 2026-04-20 — **First-play hint dismisses only on valid latch or timeout** — listens to `gameStore` phase transition, not blanket `pointerdown`.
+- [x] 2026-04-20 — **Pip grammar unified** — all pips are filled circles for nodes / perpendicular ticks for edges. Grey = remaining, neon green = consumed. Count-1 reads as clearly as count-2.
+- [x] 2026-04-20 — **HUD label** — moves counter shows `MOVES · N` / `OVER PAR M` (was bare digit).
+- [x] 2026-04-20 — **Streak tracking + 30-day calendar** — `storage.updateStreakOnSolve`, `<StreakBadge>`, `<SolvedCalendar>` on main menu.
+- [x] 2026-04-20 — **Share result** — `lib/share.ts` with star rating + Web Share API + clipboard fallback. Wired into `WinOverlay` for Daily.
+- [x] 2026-04-20 — **PWA installable + offline after first visit** — `app/manifest.ts`, `app/icon.tsx`, `app/apple-icon.tsx`, `public/sw.js`, `<ServiceWorkerRegistrar>`.
+- [x] 2026-04-20 — **SEO basics** — `app/robots.ts`, `app/sitemap.ts`, expanded metadata + OpenGraph + Twitter card in `app/layout.tsx`.
+- [x] 2026-04-20 — **Synthesized SFX (no assets)** — Web Audio API oscillator-based: latch, traverse, complete, win (chord), fail, undo, invalid. Respects `storage.audio.sfx` volume + mute.
 
 ### Visual
 

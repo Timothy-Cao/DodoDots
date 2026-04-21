@@ -14,6 +14,7 @@ export function NodeView({
   onClick,
   recent,
   cascadeDelay,
+  forceDone,
   viewBox = { w: 100, h: 100 },
 }: {
   node: GraphNode;
@@ -26,9 +27,12 @@ export function NodeView({
   initialCount?: number;
   recent?: boolean;
   cascadeDelay?: number;
+  forceDone?: boolean;
   viewBox?: ViewBoxDims;
 }) {
-  const done = node.count <= 0;
+  // Nodes no longer track visit counts — they're just waypoints.
+  // `done` is driven externally (e.g. on win) so the cascade visual still fires.
+  const done = !!forceDone;
   const snapActive = state === 'snap';
   const cx = node.x * viewBox.w;
   const cy = node.y * viewBox.h;
@@ -49,11 +53,12 @@ export function NodeView({
     ? { animationDelay: `${cascadeDelay * 80}ms` }
     : undefined;
 
-  // Concentric ring model
-  // totalLayers = initialCount (1, 2, or 3)
-  // consumed = number of layers already filled green (inner-first)
-  const totalLayers = initialCount ?? node.count;
-  const consumed = done ? totalLayers : (isVisited ? (totalLayers - node.count) : 0);
+  // Single-dot rendering: node counts no longer gate anything, so each node
+  // is a single core circle. Retained `initialCount` prop for API compatibility.
+  void initialCount;
+  void isVisited;
+  const totalLayers = 1;
+  const consumed = done ? totalLayers : 0;
 
   // Layer geometry
   const CORE_R = 1.6;

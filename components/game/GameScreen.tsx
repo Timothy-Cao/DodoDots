@@ -95,19 +95,15 @@ export function GameScreen({
     if (state.phase === 'idle') {
       const targetNode = getNode(state.graph, id);
       if (targetNode) {
-        const willComplete = targetNode.count === 1;
-        const color = willComplete ? 'var(--neon-green)' : 'var(--cyan)';
         const pulseId = `pulse-${Date.now()}-${id}`;
-        setPulses(prev => [...prev, { id: pulseId, x: targetNode.x, y: targetNode.y, color }]);
+        setPulses(prev => [...prev, { id: pulseId, x: targetNode.x, y: targetNode.y, color: 'var(--cyan)' }]);
       }
       dispatch({ type: 'latch', nodeId: id });
     } else if (state.phase === 'latched') {
       const targetNode = getNode(state.graph, id);
       if (targetNode) {
-        const willComplete = targetNode.count === 1;
-        const color = willComplete ? 'var(--neon-green)' : 'var(--cyan)';
         const pulseId = `pulse-${Date.now()}-${id}`;
-        setPulses(prev => [...prev, { id: pulseId, x: targetNode.x, y: targetNode.y, color }]);
+        setPulses(prev => [...prev, { id: pulseId, x: targetNode.x, y: targetNode.y, color: 'var(--cyan)' }]);
       }
       dispatch({ type: 'traverse', nodeId: id });
     }

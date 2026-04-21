@@ -76,17 +76,16 @@ export function GameBoard({
     }
   }, [lastCommit, onCommitAnimationDone]);
 
-  // Eligible starts while idle; valid targets while latched (filtered to unlocked)
+  // Eligible starts while idle; valid targets while latched.
+  // Node counts no longer gate traversal, so any neighbor is a valid target.
   const eligibleStarts = new Set(
     phase === 'idle'
-      ? graph.nodes.filter(n => n.startEligible && n.count > 0).map(n => n.id)
+      ? graph.nodes.filter(n => n.startEligible).map(n => n.id)
       : []
   );
   const validTargets = current && phase === 'latched'
     ? new Set(
-        getValidNeighbors(graph, current)
-          .map(n => n.nodeId)
-          .filter(id => (getNode(graph, id)?.count ?? 0) > 0)
+        getValidNeighbors(graph, current).map(n => n.nodeId)
       )
     : new Set<string>();
 
@@ -106,7 +105,7 @@ export function GameBoard({
       let best: { nodeId: string; edgeId: string; d: number } | null = null;
       for (const { nodeId, edgeId } of getValidNeighbors(graph, current)) {
         const n = getNode(graph, nodeId);
-        if (!n || n.count <= 0) continue;
+        if (!n) continue;
         const d = Math.hypot(mouse.x - n.x, mouse.y - n.y);
         if (!best || d < best.d) best = { nodeId, edgeId, d };
       }
@@ -179,13 +178,10 @@ export function GameBoard({
           const recent = recentNodes?.has(n.id);
           const cascadeDelay = phase === 'won' ? (cascadeDistances.get(n.id) ?? 0) : undefined;
 
-          // Breadcrumb: isVisited = initialCount > currentCount && currentCount > 0
-          const initialNode = initialGraph?.nodes.find(in_ => in_.id === n.id);
-          const isNodeVisited = initialNode !== undefined && initialNode.count > n.count && n.count > 0;
-
-          // Idle state hierarchy
-          const isStartableInIdle = phase === 'idle' && n.startEligible && n.count > 0;
-          const dimInIdle = phase === 'idle' && !isStartableInIdle && n.count > 0;
+          // Idle state hierarchy — node counts no longer gate anything, so
+          // start-eligibility is purely driven by the `startEligible` flag.
+          const isStartableInIdle = phase === 'idle' && n.startEligible;
+          const dimInIdle = phase === 'idle' && !isStartableInIdle;
 
           // Commit pulse
           const pulse = !!(lastCommit && n.id === lastCommit.nodeId);
@@ -194,11 +190,10 @@ export function GameBoard({
             <NodeView key={n.id} node={n} state={state} onClick={onNodeClick}
               recent={recent}
               cascadeDelay={cascadeDelay}
-              isVisited={isNodeVisited}
               isStartableInIdle={isStartableInIdle}
               dimInIdle={dimInIdle}
               pulse={pulse}
-              initialCount={initialNode?.count ?? n.count}
+              forceDone={phase === 'won'}
               viewBox={vbDims}
             />
           );

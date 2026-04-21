@@ -27,7 +27,7 @@ export type Graph = {
 };
 
 export function isSolved(g: Graph): boolean {
-  return g.nodes.every(n => n.count <= 0) && g.edges.every(e => e.count <= 0);
+  return g.edges.every(e => e.count <= 0);
 }
 
 export type Neighbor = { nodeId: string; edgeId: string };
@@ -55,13 +55,9 @@ export function getNode(g: Graph, id: string): GraphNode | undefined {
   return g.nodes.find(n => n.id === id);
 }
 
-export function findUnreachableEdge(g: Graph): string | null {
-  for (const e of g.edges) {
-    if (e.count <= 0) continue;
-    const from = getNode(g, e.from);
-    const to = getNode(g, e.to);
-    if ((from?.count ?? 1) <= 0 && (to?.count ?? 1) <= 0) return e.id;
-  }
+export function findUnreachableEdge(_g: Graph): string | null {
+  // Nodes no longer lock based on visit count, so edges are not rendered
+  // unreachable purely by their endpoints' counters hitting 0.
   return null;
 }
 
@@ -71,15 +67,12 @@ export function hasUnreachableEdge(g: Graph): boolean {
 
 export function hasNoValidMoves(g: Graph, currentNodeId: string, mode: Mode = 'loose'): boolean {
   const neighbors = getValidNeighbors(g, currentNodeId);
-  // No move is possible if EVERY valid neighbor is already locked (count <= 0)
-  // OR — in strict mode — every connecting edge is also locked (count <= 0)
+  if (neighbors.length === 0) return true;
+  // Nodes no longer lock based on count. In strict mode, an edge at count <= 0
+  // is locked and cannot be retraversed; in loose mode any neighbor is reachable.
+  if (mode !== 'strict') return false;
   return neighbors.every(n => {
-    const node = getNode(g, n.nodeId);
-    if (!node || node.count <= 0) return true;
-    if (mode === 'strict') {
-      const edge = g.edges.find(e => e.id === n.edgeId);
-      if (edge && edge.count <= 0) return true;
-    }
-    return false;
+    const edge = g.edges.find(e => e.id === n.edgeId);
+    return edge ? edge.count <= 0 : true;
   });
 }

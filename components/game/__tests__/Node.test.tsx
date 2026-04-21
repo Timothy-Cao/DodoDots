@@ -9,28 +9,19 @@ function wrap(ui: React.ReactNode) {
 }
 
 describe('NodeView', () => {
-  it('renders 1 ring when count === 1', () => {
-    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 1 }} state="idle" onClick={() => {}} initialCount={1} />));
+  it('renders a single ring regardless of the node count field', () => {
+    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 1 }} state="idle" onClick={() => {}} />));
     expect(getAllByTestId('ring').length).toBe(1);
   });
-  it('renders 2 rings when count === 2', () => {
-    const { getAllByTestId } = render(wrap(<NodeView node={base} state="idle" onClick={() => {}} initialCount={2} />));
-    expect(getAllByTestId('ring').length).toBe(2);
+  it('still renders a single ring for higher count values', () => {
+    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 3 }} state="idle" onClick={() => {}} />));
+    expect(getAllByTestId('ring').length).toBe(1);
   });
-  it('renders 3 rings when count === 3', () => {
-    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 3 }} state="idle" onClick={() => {}} initialCount={3} />));
-    expect(getAllByTestId('ring').length).toBe(3);
-  });
-  it('renders rings when count === 0 (done, using initialCount)', () => {
-    const { getAllByTestId } = render(wrap(<NodeView node={{ ...base, count: 0 }} state="idle" onClick={() => {}} initialCount={2} />));
-    // done node still shows layers from initialCount
-    expect(getAllByTestId('ring').length).toBe(2);
-  });
-  it('applies done class when count <= 0', () => {
-    const { container } = render(wrap(<NodeView node={{ ...base, count: 0 }} state="idle" onClick={() => {}} />));
+  it('applies done class when forceDone is set (e.g. on win)', () => {
+    const { container } = render(wrap(<NodeView node={base} state="idle" onClick={() => {}} forceDone />));
     expect(container.querySelector('.node--done')).not.toBeNull();
   });
-  it('applies pending class when count > 0', () => {
+  it('applies pending class while not done', () => {
     const { container } = render(wrap(<NodeView node={base} state="idle" onClick={() => {}} />));
     expect(container.querySelector('.node--pending')).not.toBeNull();
   });

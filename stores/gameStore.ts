@@ -67,10 +67,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (hit) {
         lastCommit = { nodeId: a.nodeId, edgeId: hit.edgeId, at: Date.now() };
         hapticCommit();
-        // Check if destination node or edge just hit 0 (completed element)
-        const destNode = next.graph.nodes.find(n => n.id === a.nodeId);
+        // Edge just hit 0 → "completed" SFX. Nodes no longer have a visit counter.
         const traversedEdge = next.graph.edges.find(e => e.id === hit.edgeId);
-        if (destNode?.count === 0 || traversedEdge?.count === 0) {
+        if (traversedEdge?.count === 0) {
           playSfx('complete');
         } else {
           playSfx('traverse');

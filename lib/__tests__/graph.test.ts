@@ -7,11 +7,11 @@ const g: Graph = {
 };
 
 describe('isSolved', () => {
-  it('returns true when all counts are <= 0', () => {
+  it('returns true when all edge counts are <= 0', () => {
     expect(isSolved(g)).toBe(true);
   });
-  it('returns false when any node count > 0', () => {
-    expect(isSolved({ ...g, nodes: [{ ...g.nodes[0], count: 1 }] })).toBe(false);
+  it('ignores node counts (nodes do not gate winning)', () => {
+    expect(isSolved({ ...g, nodes: [{ ...g.nodes[0], count: 1 }] })).toBe(true);
   });
   it('returns false when any edge count > 0', () => {
     const g2: Graph = {

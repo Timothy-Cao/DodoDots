@@ -4,16 +4,17 @@ import { initGame, reduce } from '../game/state';
 import { isSolved } from '../graph';
 
 const SOLUTIONS: Record<string, string[]> = {
-  '01-first-steps': ['a', 'b'],
-  '02-three-in-a-row': ['a', 'b', 'c'],
-  '03-the-triangle': ['a', 'b', 'c', 'a'],
-  '04-the-square': ['a', 'b', 'c', 'd', 'a'],
-  '05-branching-out': ['a', 'b', 'c', 'd', 'b', 'e'],
-  '06-pentagon': ['a', 'b', 'c', 'd', 'e', 'a'],
-  '07-the-bowtie': ['a', 'b', 'c', 'd', 'e', 'c'],
-  '08-the-hexagon': ['a', 'b', 'c', 'd', 'e', 'f', 'a'],
-  '09-pentagon-plus-cross': ['a', 'b', 'c', 'a', 'e', 'd', 'c'],
-  '10-double-diamond': ['a', 'b', 'c', 'e', 'f', 'g', 'c', 'd', 'a'],
+  'lvlmo87m2107te': [
+    'nmo87m7xatux',
+    'nmo87m5f20ss',
+    'nmo87m8dj7kk',
+    'nmo87m5yurss',
+    'nmo87m7xatux',
+    'nmo87m7ikpjg',
+    'nmo87m5f20ss',
+    'nmo87m5yurss',
+    'nmo87m7ikpjg',
+  ],
 };
 
 describe('Campaign levels', () => {

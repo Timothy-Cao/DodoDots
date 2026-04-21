@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "id": "lvlmo87m2107te",
+  "title": "Untitled",
+  "maxMoves": 5,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      {
+        "id": "nmo87m5f20ss",
+        "x": 0.4,
+        "y": 0.3,
+        "count": 2,
+        "startEligible": true
+      },
+      {
+        "id": "nmo87m5yurss",
+        "x": 0.6,
+        "y": 0.3,
+        "count": 2,
+        "startEligible": true
+      },
+      {
+        "id": "nmo87m7ikpjg",
+        "x": 0.6,
+        "y": 0.6,
+        "count": 2,
+        "startEligible": true
+      },
+      {
+        "id": "nmo87m7xatux",
+        "x": 0.4,
+        "y": 0.6,
+        "count": 2,
+        "startEligible": true
+      },
+      {
+        "id": "nmo87m8dj7kk",
+        "x": 0.5,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": true
+      }
+    ],
+    "edges": [
+      {
+        "id": "emo87md1vf8u",
+        "from": "nmo87m8dj7kk",
+        "to": "nmo87m5f20ss",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87mdv302y",
+        "from": "nmo87m5f20ss",
+        "to": "nmo87m7xatux",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87meeuyq9",
+        "from": "nmo87m7xatux",
+        "to": "nmo87m7ikpjg",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87meunxzj",
+        "from": "nmo87m7ikpjg",
+        "to": "nmo87m5yurss",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87mf81j23",
+        "from": "nmo87m5yurss",
+        "to": "nmo87m8dj7kk",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87mfzp84t",
+        "from": "nmo87m5f20ss",
+        "to": "nmo87m5yurss",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87mgic9xa",
+        "from": "nmo87m5yurss",
+        "to": "nmo87m7xatux",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo87mhg5ttd",
+        "from": "nmo87m5f20ss",
+        "to": "nmo87m7ikpjg",
+        "count": 1,
+        "direction": "bi"
+      }
+    ]
+  }
+}

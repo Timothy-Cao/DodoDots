@@ -45,12 +45,8 @@ export function reduce(s: GameState, a: GameAction): GameState {
       if (s.phase !== 'idle') return s;
       const node = getNode(s.graph, a.nodeId);
       if (!node || !node.startEligible) return s;
-      const graph: Graph = {
-        ...s.graph,
-        nodes: s.graph.nodes.map(n =>
-          n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
-        ),
-      };
+      // Node counts are no longer tracked — nodes are free waypoints.
+      const graph: Graph = s.graph;
       const next: GameState = { ...s, graph, current: a.nodeId, phase: 'latched', failReason: null, failedEdge: null };
       if (isSolved(graph)) return { ...next, phase: 'won' };
       const unreachableEdgeId = findUnreachableEdge(graph);
@@ -63,9 +59,9 @@ export function reduce(s: GameState, a: GameAction): GameState {
     case 'traverse': {
       if (s.phase !== 'latched' && s.phase !== 'tracing') return s;
       if (s.current === null) return s;
-      // Reject traverse to a node that is already done (count ≤ 0)
+      // Node counts no longer gate traversal — any neighboring node is reachable.
       const destNode = getNode(s.graph, a.nodeId);
-      if (!destNode || destNode.count <= 0) return s;
+      if (!destNode) return s;
       const neighbors = getValidNeighbors(s.graph, s.current);
       const hit = neighbors.find(n => n.nodeId === a.nodeId);
       if (!hit) return s;
@@ -74,10 +70,9 @@ export function reduce(s: GameState, a: GameAction): GameState {
         const edge = s.graph.edges.find(e => e.id === hit.edgeId);
         if (edge && edge.count <= 0) return s;
       }
+      // Node counts are no longer tracked; only edges decrement on traversal.
       const graph: Graph = {
-        nodes: s.graph.nodes.map(n =>
-          n.id === a.nodeId ? { ...n, count: Math.max(0, n.count - 1) } : n
-        ),
+        nodes: s.graph.nodes,
         edges: s.graph.edges.map(e =>
           e.id === hit.edgeId ? { ...e, count: Math.max(0, e.count - 1) } : e
         ),

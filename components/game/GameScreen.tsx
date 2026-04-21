@@ -15,13 +15,14 @@ import { shareResult } from '@/lib/share';
 import { unlockAudio } from '@/lib/sfx';
 
 export function GameScreen({
-  graph, maxMoves, title, onWin, onFail, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose',
+  graph, maxMoves, title, onWin, onFail, onNext, menuHref = '/', hideWinOverlay = false, shareData, mode = 'loose',
 }: {
   graph: Graph;
   maxMoves: number;
   title: string;
-  onWin?: () => void;
+  onWin?: (movesUsed: number) => void;
   onFail?: () => void;
+  onNext?: () => void;
   menuHref?: string;
   hideWinOverlay?: boolean;
   shareData?: { date: string };
@@ -53,7 +54,7 @@ export function GameScreen({
 
   useEffect(() => {
     if (!state) return;
-    if (state.phase === 'won' && onWin) onWin();
+    if (state.phase === 'won' && onWin) onWin(state.maxMoves - state.movesRemaining);
     if (state.phase === 'failed' && onFail) onFail();
   }, [state?.phase, onWin, onFail, state]);
 
@@ -141,6 +142,7 @@ export function GameScreen({
           movesUsed={movesUsed}
           optimalMoves={state.maxMoves}
           onMenu={() => router.push(menuHref)}
+          onNext={onNext}
           onShare={shareData
             ? () => shareResult({ date: shareData.date, movesUsed, optimal: state.maxMoves })
             : undefined}

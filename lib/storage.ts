@@ -76,4 +76,21 @@ export const storage = {
     localStorage.setItem('dododots:streak', JSON.stringify(next));
     return next;
   },
+
+  getCampaignProgress: (): Record<string, { solved: boolean; bestMoves: number }> => {
+    if (typeof window === 'undefined') return {};
+    try {
+      const raw = localStorage.getItem('dododots:campaignProgress');
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  },
+
+  markCampaignSolved: (id: string, movesUsed: number): void => {
+    if (typeof window === 'undefined') return;
+    const all = storage.getCampaignProgress();
+    const existing = all[id];
+    const bestMoves = existing?.solved ? Math.min(existing.bestMoves, movesUsed) : movesUsed;
+    all[id] = { solved: true, bestMoves };
+    localStorage.setItem('dododots:campaignProgress', JSON.stringify(all));
+  },
 };

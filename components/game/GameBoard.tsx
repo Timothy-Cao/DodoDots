@@ -1,11 +1,12 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BloomDefs } from './BloomDefs';
 import { NodeView, type NodeVisualState } from './Node';
 import { EdgeView } from './Edge';
 import { CommitPulse } from './CommitPulse';
 import type { Graph, ViewBoxDims } from '@/lib/graph';
 import { getNode, getValidNeighbors } from '@/lib/graph';
+import { computeCurvatures } from '@/lib/layout';
 
 export type PulseEntry = { id: string; x: number; y: number; color: string };
 
@@ -115,6 +116,9 @@ export function GameBoard({
     }
   }
 
+  // Per-edge curvature to resolve visual conflicts (crossings + fan-outs)
+  const curvatures = useMemo(() => computeCurvatures(graph), [graph]);
+
   // BFS distances from current for win cascade
   const cascadeDistances = new Map<string, number>();
   if (phase === 'won' && current) {
@@ -167,6 +171,7 @@ export function GameBoard({
               isFailed={isFailed}
               initialCount={initialEdge?.count ?? e.count}
               viewBox={vbDims}
+              curvature={curvatures[e.id] ?? 0}
             />
           );
         })}

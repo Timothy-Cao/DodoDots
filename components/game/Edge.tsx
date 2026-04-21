@@ -1,9 +1,11 @@
 import type { GraphEdge, GraphNode, ViewBoxDims } from '@/lib/graph';
+import { bezierControl, bezierPoint, bezierTangent } from '@/lib/layout';
 
 export function EdgeView({
   edge, from, to, snap = false, recent, cascadeDelay, failFlash,
   isVisited, flash, isFailed, initialCount,
   viewBox = { w: 100, h: 100 },
+  curvature = 0,
 }: {
   edge: GraphEdge;
   from: GraphNode;
@@ -17,11 +19,11 @@ export function EdgeView({
   isFailed?: boolean;
   initialCount?: number;
   viewBox?: ViewBoxDims;
+  curvature?: number;
 }) {
   const done = edge.count <= 0;
   const x1 = from.x * viewBox.w, y1 = from.y * viewBox.h;
   const x2 = to.x * viewBox.w, y2 = to.y * viewBox.h;
-  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
   const directed = edge.direction !== 'bi';
   const bright = done || snap;
 
@@ -53,40 +55,87 @@ export function EdgeView({
     winwave && 'edge--winwave',
   ].filter(Boolean).join(' ');
 
-  const arrowX1 = edge.direction === 'backward' ? x2 : x1;
-  const arrowY1 = edge.direction === 'backward' ? y2 : y1;
-  const arrowX2 = edge.direction === 'backward' ? x1 : x2;
-  const arrowY2 = edge.direction === 'backward' ? y1 : y2;
+  // Bezier curve support
+  const useCurve = curvature !== 0;
+  const p0 = { x: x1, y: y1 };
+  const p2 = { x: x2, y: y2 };
+  // bezierControl works in viewBox space already (coordinates are already scaled)
+  const cp = useCurve
+    ? bezierControl(p0, p2, curvature, viewBox.w, viewBox.h)
+    : { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+
+  const pathD = useCurve ? `M ${x1} ${y1} Q ${cp.x} ${cp.y} ${x2} ${y2}` : null;
+
+  // Tick position helper — returns point and tangent at parameter t along the edge
+  function tickAt(t: number): { pos: { x: number; y: number }; tangent: { x: number; y: number } } {
+    if (useCurve) {
+      return {
+        pos: bezierPoint(t, p0, cp, p2),
+        tangent: bezierTangent(t, p0, cp, p2),
+      };
+    }
+    const tx = x2 - x1, ty = y2 - y1;
+    const len = Math.hypot(tx, ty) || 1;
+    return {
+      pos: { x: x1 + tx * t, y: y1 + ty * t },
+      tangent: { x: tx / len, y: ty / len },
+    };
+  }
 
   // Tick mark rendering (replaces circle pips on edges)
   const totalPips = initialCount ?? edge.count;
   const filledPips = done ? totalPips : (isVisited ? (totalPips - edge.count) : 0);
   const showPips = !done && totalPips <= 2;
-
-  // Positions along edge for ticks
-  const p35x = x1 + (x2 - x1) * 0.35, p35y = y1 + (y2 - y1) * 0.35;
-  const p65x = x1 + (x2 - x1) * 0.65, p65y = y1 + (y2 - y1) * 0.65;
-
-  // Perpendicular unit vector for tick marks
-  const dx = x2 - x1, dy = y2 - y1;
-  const edgeLen = Math.hypot(dx, dy) || 1;
-  const px = -dy / edgeLen, py = dx / edgeLen; // perpendicular unit vector
   const halfTick = 0.8; // half of tick length 1.6
+
+  // Compute tick lines as { x1, y1, x2, y2 } using bezier-aware positions
+  function makeTick(t: number) {
+    const { pos, tangent } = tickAt(t);
+    // Perpendicular to tangent: (-tangent.y, tangent.x)
+    const px = -tangent.y, py = tangent.x;
+    return {
+      x1: pos.x - px * halfTick,
+      y1: pos.y - py * halfTick,
+      x2: pos.x + px * halfTick,
+      y2: pos.y + py * halfTick,
+    };
+  }
+
+  const tick1 = showPips && totalPips >= 1 ? makeTick(totalPips === 1 ? 0.5 : 0.35) : null;
+  const tick2 = showPips && totalPips === 2 ? makeTick(0.65) : null;
 
   const cascadeStyle = cascadeDelay !== undefined && done
     ? { animationDelay: `${cascadeDelay * 80}ms` }
     : undefined;
 
+  // Arrow direction (directed edges only, straight-line geometry only for now)
+  // TODO: compute bezier-aware arrow position when useCurve && directed
+  const arrowX1 = edge.direction === 'backward' ? x2 : x1;
+  const arrowY1 = edge.direction === 'backward' ? y2 : y1;
+  const arrowX2 = edge.direction === 'backward' ? x1 : x2;
+  const arrowY2 = edge.direction === 'backward' ? y1 : y2;
+
   return (
     <g className={classes} style={cascadeStyle}>
-      <line
-        x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke={strokeColor}
-        strokeWidth={snap ? 0.8 : 0.5}
-        strokeDasharray={snap ? '2 1' : undefined}
-        filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
-      />
-      {directed && (
+      {useCurve ? (
+        <path
+          d={pathD!}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={snap ? 0.8 : 0.5}
+          strokeDasharray={snap ? '2 1' : undefined}
+          filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        />
+      ) : (
+        <line
+          x1={x1} y1={y1} x2={x2} y2={y2}
+          stroke={strokeColor}
+          strokeWidth={snap ? 0.8 : 0.5}
+          strokeDasharray={snap ? '2 1' : undefined}
+          filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        />
+      )}
+      {directed && !useCurve && (
         <polygon
           points={arrowHead(arrowX1, arrowY1, arrowX2, arrowY2)}
           fill={done ? 'var(--neon-green)' : (isFailed ? 'var(--danger)' : 'var(--dim)')}
@@ -94,35 +143,25 @@ export function EdgeView({
       )}
       {/* Perpendicular tick marks for pending edges (count 1 or 2) */}
       {/* Done state: no ticks — bright green edge conveys done */}
-      {showPips && totalPips === 1 && (
+      {tick1 && (
         <line
           data-testid="pip"
-          x1={mx - px * halfTick} y1={my - py * halfTick}
-          x2={mx + px * halfTick} y2={my + py * halfTick}
+          x1={tick1.x1} y1={tick1.y1}
+          x2={tick1.x2} y2={tick1.y2}
           stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
           strokeWidth={0.45}
           filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
       )}
-      {showPips && totalPips === 2 && (
-        <>
-          <line
-            data-testid="pip"
-            x1={p35x - px * halfTick} y1={p35y - py * halfTick}
-            x2={p35x + px * halfTick} y2={p35y + py * halfTick}
-            stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
-            strokeWidth={0.45}
-            filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
-          />
-          <line
-            data-testid="pip"
-            x1={p65x - px * halfTick} y1={p65y - py * halfTick}
-            x2={p65x + px * halfTick} y2={p65y + py * halfTick}
-            stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
-            strokeWidth={0.45}
-            filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
-          />
-        </>
+      {tick2 && (
+        <line
+          data-testid="pip"
+          x1={tick2.x1} y1={tick2.y1}
+          x2={tick2.x2} y2={tick2.y2}
+          stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
+          strokeWidth={0.45}
+          filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
+        />
       )}
     </g>
   );

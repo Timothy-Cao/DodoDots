@@ -33,24 +33,6 @@ export function NodeView({
   const cx = node.x * viewBox.w;
   const cy = node.y * viewBox.h;
 
-  // Determine fill and filter based on state
-  let fill: string;
-  let bloomFilter: string;
-  if (done) {
-    fill = 'var(--neon-green)';
-    bloomFilter = 'url(#bloom-bright)';
-  } else if (snapActive) {
-    // Snap state: cyan, not green — visually distinct from "done"
-    fill = 'var(--cyan)';
-    bloomFilter = 'url(#bloom-bright)';
-  } else if (isVisited) {
-    fill = 'color-mix(in srgb, var(--cyan) 30%, var(--dim) 70%)';
-    bloomFilter = 'url(#bloom-dim)';
-  } else {
-    fill = 'var(--dim)';
-    bloomFilter = 'url(#bloom-dim)';
-  }
-
   const classes = [
     'node',
     done ? 'node--done' : 'node--pending',
@@ -67,11 +49,16 @@ export function NodeView({
     ? { animationDelay: `${cascadeDelay * 80}ms` }
     : undefined;
 
-  // Pip rendering: determine pip counts
-  // filledPips = consumed pips (shown green); remaining = grey
-  const totalPips = initialCount ?? node.count;
-  const filledPips = done ? totalPips : (isVisited ? (totalPips - node.count) : 0);
-  const showPips = totalPips <= 2;
+  // Concentric ring model
+  // totalLayers = initialCount (1, 2, or 3)
+  // consumed = number of layers already filled green (inner-first)
+  const totalLayers = initialCount ?? node.count;
+  const consumed = done ? totalLayers : (isVisited ? (totalLayers - node.count) : 0);
+
+  // Layer geometry
+  const CORE_R = 1.6;
+  const RING_STEP = 1.2;
+  const outerR = CORE_R + (totalLayers - 1) * RING_STEP;
 
   // Cursor logic: pointer for clickable nodes, default for locked/unreachable
   const isClickable = state === 'startEligible' || state === 'current' || state === 'validTarget' || state === 'snap';
@@ -82,11 +69,11 @@ export function NodeView({
       className={classes}
       style={{ opacity: dimInIdle ? 0.3 : undefined, ...cascadeStyle }}
     >
-      {/* Startable-in-idle halo ring */}
+      {/* Startable-in-idle halo ring — outside the outermost ring */}
       {isStartableInIdle && (
         <circle
           className="node--start-halo"
-          cx={cx} cy={cy} r={5}
+          cx={cx} cy={cy} r={outerR + 1.4}
           fill="none"
           stroke="var(--cyan)"
           strokeWidth={0.4}
@@ -98,7 +85,7 @@ export function NodeView({
       {state === 'startEligible' && !isStartableInIdle && (
         <circle
           className="node-halo"
-          cx={cx} cy={cy} r={5}
+          cx={cx} cy={cy} r={outerR + 1.4}
           fill="none"
           stroke="var(--cyan)"
           strokeWidth={0.2}
@@ -106,25 +93,62 @@ export function NodeView({
           pointerEvents="none"
         />
       )}
-      {/* Invisible hit target — ~44pt effective on mobile (~28pt on desktop) */}
+      {/* Invisible hit target */}
       <circle
         cx={cx} cy={cy} r={7}
         fill="transparent"
         style={{ cursor: hitCursor }}
         onPointerDown={(e) => { e.preventDefault(); onClick(node.id); }}
       />
-      {/* Main node circle — decorative only */}
-      <circle
-        cx={cx} cy={cy} r={3}
-        fill={fill}
-        filter={bloomFilter}
-        pointerEvents="none"
-      />
-      {/* Snap halo: pulsing dashed ring — distinct from done */}
+      {/* Concentric rings — layer 0 = innermost core (filled circle) */}
+      {Array.from({ length: totalLayers }).map((_, k) => {
+        const r = CORE_R + k * RING_STEP;
+        const isLayerGreen = k < consumed;
+
+        let layerColor: string;
+        if (snapActive) {
+          layerColor = 'var(--cyan)';
+        } else if (isLayerGreen) {
+          layerColor = 'var(--neon-green)';
+        } else {
+          layerColor = 'var(--dim)';
+        }
+
+        const layerFilter = (isLayerGreen || snapActive) ? 'url(#bloom-bright)' : 'url(#bloom-dim)';
+
+        if (k === 0) {
+          // Innermost core: filled circle
+          return (
+            <circle
+              key={k}
+              data-testid="ring"
+              cx={cx} cy={cy} r={r}
+              fill={layerColor}
+              filter={layerFilter}
+              pointerEvents="none"
+            />
+          );
+        } else {
+          // Outer rings: stroke-only
+          return (
+            <circle
+              key={k}
+              data-testid="ring"
+              cx={cx} cy={cy} r={r}
+              fill="none"
+              stroke={layerColor}
+              strokeWidth={0.45}
+              filter={layerFilter}
+              pointerEvents="none"
+            />
+          );
+        }
+      })}
+      {/* Snap halo: pulsing dashed ring */}
       {snapActive && (
         <circle
           className="node--snap-halo"
-          cx={cx} cy={cy} r={5}
+          cx={cx} cy={cy} r={outerR + 2}
           fill="none"
           stroke="var(--cyan)"
           strokeWidth={0.3}
@@ -136,49 +160,13 @@ export function NodeView({
       {pulse && (
         <circle
           className="node--commit-ring"
-          cx={cx} cy={cy} r={3}
+          cx={cx} cy={cy} r={CORE_R}
           fill="none"
           stroke="var(--cyan)"
           strokeWidth={0.5}
           filter="url(#bloom-bright)"
           pointerEvents="none"
         />
-      )}
-      {/* Pips for count 1 or 2 — always filled; green=consumed, grey=remaining */}
-      {!done && showPips && totalPips === 1 && (
-        <circle
-          data-testid="pip"
-          cx={cx} cy={cy} r={0.85}
-          fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--bg-deep)'}
-          stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
-          strokeWidth={0.18}
-          filter={filledPips >= 1 ? 'url(#bloom-bright)' : undefined}
-          pointerEvents="none"
-        />
-      )}
-      {!done && showPips && totalPips === 2 && (
-        <>
-          {/* Left pip */}
-          <circle
-            data-testid="pip"
-            cx={cx - 1} cy={cy} r={0.7}
-            fill={filledPips >= 1 ? 'var(--neon-green)' : 'var(--bg-deep)'}
-            stroke={filledPips >= 1 ? 'none' : 'var(--cyan)'}
-            strokeWidth={0.18}
-            filter={filledPips >= 1 ? 'url(#bloom-bright)' : undefined}
-            pointerEvents="none"
-          />
-          {/* Right pip */}
-          <circle
-            data-testid="pip"
-            cx={cx + 1} cy={cy} r={0.7}
-            fill={filledPips >= 2 ? 'var(--neon-green)' : 'var(--bg-deep)'}
-            stroke={filledPips >= 2 ? 'none' : 'var(--cyan)'}
-            strokeWidth={0.18}
-            filter={filledPips >= 2 ? 'url(#bloom-bright)' : undefined}
-            pointerEvents="none"
-          />
-        </>
       )}
     </g>
   );

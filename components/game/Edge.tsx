@@ -38,7 +38,7 @@ export function EdgeView({
   } else if (isVisited) {
     strokeColor = 'color-mix(in srgb, var(--cyan) 50%, var(--dim) 50%)';
   } else {
-    strokeColor = 'var(--dim)';
+    strokeColor = 'var(--edge-pending)';
   }
 
   const winwave = cascadeDelay !== undefined && done;
@@ -86,7 +86,7 @@ export function EdgeView({
   const totalPips = initialCount ?? edge.count;
   const filledPips = done ? totalPips : (isVisited ? (totalPips - edge.count) : 0);
   const showPips = !done && totalPips <= 2;
-  const halfTick = 0.8; // half of tick length 1.6
+  const halfTick = 1.0; // half of tick length 2.0
 
   // Compute tick lines as { x1, y1, x2, y2 } using bezier-aware positions
   function makeTick(t: number) {
@@ -122,7 +122,7 @@ export function EdgeView({
           d={pathD!}
           fill="none"
           stroke={strokeColor}
-          strokeWidth={snap ? 0.8 : 0.5}
+          strokeWidth={snap ? 0.8 : 0.7}
           strokeDasharray={snap ? '2 1' : undefined}
           filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
@@ -130,7 +130,7 @@ export function EdgeView({
         <line
           x1={x1} y1={y1} x2={x2} y2={y2}
           stroke={strokeColor}
-          strokeWidth={snap ? 0.8 : 0.5}
+          strokeWidth={snap ? 0.8 : 0.7}
           strokeDasharray={snap ? '2 1' : undefined}
           filter={bright ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
@@ -148,8 +148,8 @@ export function EdgeView({
           data-testid="pip"
           x1={tick1.x1} y1={tick1.y1}
           x2={tick1.x2} y2={tick1.y2}
-          stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--dim)'}
-          strokeWidth={0.45}
+          stroke={filledPips >= 1 ? 'var(--neon-green)' : 'var(--edge-pending)'}
+          strokeWidth={0.6}
           filter={filledPips >= 1 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
       )}
@@ -158,8 +158,8 @@ export function EdgeView({
           data-testid="pip"
           x1={tick2.x1} y1={tick2.y1}
           x2={tick2.x2} y2={tick2.y2}
-          stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--dim)'}
-          strokeWidth={0.45}
+          stroke={filledPips >= 2 ? 'var(--neon-green)' : 'var(--edge-pending)'}
+          strokeWidth={0.6}
           filter={filledPips >= 2 ? 'url(#bloom-bright)' : 'url(#bloom-dim)'}
         />
       )}

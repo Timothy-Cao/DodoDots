@@ -4,6 +4,7 @@
   --bg-deep: #05070d;
   --grid: #0f1a2b;
   --dim: #6a7a8f;
+  --edge-pending: #8896ad; /* slightly brighter than --dim for pending line visibility */
   --neon-green: #39ff8e;
   --danger: #ff3b5c;
   --cyan: #39d0ff;
@@ -107,7 +108,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   50% { filter: url(#bloom-bright); transform: scale(1.15); transform-origin: center; transform-box: fill-box; }
 }
 @keyframes win-wave-edge {
-  0%,100% { stroke-width: 0.5; }
+  0%,100% { stroke-width: 0.7; }
   50% { stroke-width: 1.2; }
 }
 
@@ -121,7 +122,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .edge--fail-flash line, .edge--fail-flash path { animation: fail-flash 800ms ease-out both; stroke: var(--danger) !important; }
 @keyframes fail-flash {
   0%, 70% { stroke-width: 1; filter: url(#bloom-bright); opacity: 1; }
-  100% { stroke-width: 0.5; opacity: 0.6; }
+  100% { stroke-width: 0.7; opacity: 0.6; }
 }
 
 /* Change 4: node start halo + commit ring */

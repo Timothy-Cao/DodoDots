@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "id": "lvlmo89ukidwxj",
+  "title": "Level 4",
+  "maxMoves": 5,
+  "mode": "strict",
+  "graph": {
+    "nodes": [
+      {
+        "id": "nmo89unrtmv8",
+        "x": 0.3,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89uo9mo95",
+        "x": 0.3,
+        "y": 0.3,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89upzh6l1",
+        "x": 0.4,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89uqg6up4",
+        "x": 0.6,
+        "y": 0.8,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89ur7ng3t",
+        "x": 0.7,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89urxay7x",
+        "x": 0.7,
+        "y": 0.3,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89usb571j",
+        "x": 0.6,
+        "y": 0.1,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89usnfttu",
+        "x": 0.4,
+        "y": 0.1,
+        "count": 2,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89yjspz0n",
+        "x": 0.5,
+        "y": 0.3,
+        "count": 1,
+        "startEligible": true
+      },
+      {
+        "id": "nmo89ykbdjsx",
+        "x": 0.5,
+        "y": 0.6,
+        "count": 1,
+        "startEligible": true
+      }
+    ],
+    "edges": [
+      {
+        "id": "emo89uwmbn7k",
+        "from": "nmo89usnfttu",
+        "to": "nmo89uo9mo95",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89vcz1sm0",
+        "from": "nmo89unrtmv8",
+        "to": "nmo89upzh6l1",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89wcbjczg",
+        "from": "nmo89usb571j",
+        "to": "nmo89urxay7x",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89wd2y41b",
+        "from": "nmo89ur7ng3t",
+        "to": "nmo89uqg6up4",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89wq2imsm",
+        "from": "nmo89upzh6l1",
+        "to": "nmo89usb571j",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89wqtq67d",
+        "from": "nmo89usnfttu",
+        "to": "nmo89uqg6up4",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89x1o7zw6",
+        "from": "nmo89uo9mo95",
+        "to": "nmo89upzh6l1",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89x30a9ds",
+        "from": "nmo89unrtmv8",
+        "to": "nmo89usnfttu",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89x3r9g0c",
+        "from": "nmo89usb571j",
+        "to": "nmo89ur7ng3t",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89x4gbfhg",
+        "from": "nmo89uqg6up4",
+        "to": "nmo89urxay7x",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89ymfzfhj",
+        "from": "nmo89uo9mo95",
+        "to": "nmo89yjspz0n",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89ynn8h5t",
+        "from": "nmo89ykbdjsx",
+        "to": "nmo89unrtmv8",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89yosqt33",
+        "from": "nmo89urxay7x",
+        "to": "nmo89yjspz0n",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89ypjjg5d",
+        "from": "nmo89ykbdjsx",
+        "to": "nmo89ur7ng3t",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo89yrsz82u",
+        "from": "nmo89yjspz0n",
+        "to": "nmo89ykbdjsx",
+        "count": 2,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8aksuuwk4",
+        "from": "nmo89uo9mo95",
+        "to": "nmo89ykbdjsx",
+        "count": 1,
+        "direction": "bi"
+      },
+      {
+        "id": "emo8akthofjf",
+        "from": "nmo89ykbdjsx",
+        "to": "nmo89urxay7x",
+        "count": 1,
+        "direction": "bi"
+      }
+    ]
+  }
+}

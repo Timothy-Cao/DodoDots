@@ -52,6 +52,8 @@ Format: `[ ] TITLE` (one-liner) → **Why** (short rationale) → **How** (sketc
 
 ### Done in 2026-04-20 polish + retention pass (recap)
 
+- [x] 2026-04-20 — **Auto-curve overlapping edges** — `lib/layout.ts` computes signed curvature per edge from segment crossings (away-from-other-midpoint heuristic) and small-angle fan-outs from shared nodes (< ~25.8°). `Edge.tsx` renders bezier `<path>` when curvature ≠ 0; tick marks placed on the curve via `bezierPoint`/`bezierTangent`. CSS animations extended to both `line` and `path` selectors. **Curved + directed arrows still TODO** (generator only emits bidirectional today).
+
 - [x] 2026-04-20 — **Placement no longer pins nodes to corners** — Lloyd-ish spring relaxation around `MIN_DIST*1.5`. Verified: each generated puzzle now has interior nodes.
 - [x] 2026-04-20 — **Snap visual is distinct from done** — snap target is cyan (not green) with dashed pulsing halo on nodes and a "chasing ants" stroke-dashoffset animation on edges.
 - [x] 2026-04-20 — **First-play hint dismisses only on valid latch or timeout** — listens to `gameStore` phase transition, not blanket `pointerdown`.

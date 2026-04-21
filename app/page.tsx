@@ -10,7 +10,7 @@ export default function Home() {
       <StreakBadge />
       <Link href="/daily" prefetch><button>Daily</button></Link>
       <Link href="/tutorial" prefetch><button>Tutorial</button></Link>
-      <button disabled>Campaign · soon</button>
+      <Link href="/campaign" prefetch><button>Campaign</button></Link>
       <Link href="/builder" prefetch><button>Builder</button></Link>
       <SolvedCalendar />
     </MenuLayout>

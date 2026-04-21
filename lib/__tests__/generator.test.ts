@@ -19,15 +19,15 @@ describe('generateDaily', () => {
     const b = generateDaily('2026-04-19');
     expect(a.graph).toEqual(b.graph);
   });
-  it('clamps counts to [1,2]', () => {
+  it('clamps counts to [1,3]', () => {
     const { graph } = generateDaily('stress');
     for (const n of graph.nodes) {
       expect(n.count).toBeGreaterThanOrEqual(1);
-      expect(n.count).toBeLessThanOrEqual(2);
+      expect(n.count).toBeLessThanOrEqual(3);
     }
     for (const e of graph.edges) {
       expect(e.count).toBeGreaterThanOrEqual(1);
-      expect(e.count).toBeLessThanOrEqual(2);
+      expect(e.count).toBeLessThanOrEqual(3);
     }
   });
 });

@@ -54,7 +54,7 @@ export function generateDaily(seed: string, options?: GeneratorOptions): Generat
         id,
         x: p.x,
         y: p.y,
-        count: Math.min(Math.max(nodeVisits[i], 1), 2),
+        count: Math.min(Math.max(nodeVisits[i], 1), 3),
         startEligible: true,
       };
     });
@@ -63,7 +63,7 @@ export function generateDaily(seed: string, options?: GeneratorOptions): Generat
     id: `e${i}`,
     from: nodeIndexMap.get(e.a)!,
     to: nodeIndexMap.get(e.b)!,
-    count: Math.min(Math.max(edgeVisits.get(`${Math.min(e.a, e.b)}-${Math.max(e.a, e.b)}`) ?? 1, 1), 2),
+    count: Math.min(Math.max(edgeVisits.get(`${Math.min(e.a, e.b)}-${Math.max(e.a, e.b)}`) ?? 1, 1), 3),
     direction: 'bi' as const,
   }));
 

@@ -36,7 +36,7 @@ export function simulateWalk(
     // Build candidate set of all reachable neighbors filtered by cap
     const existingCandidates = adj[cur].filter(j => {
       const k = edgeKey(cur, j);
-      return nodeVisits[j] < 2 && (edgeVisitCounts.get(k) ?? 0) < 2;
+      return nodeVisits[j] < 3 && (edgeVisitCounts.get(k) ?? 0) < 3;
     });
 
     const newCandidates: Array<{ id: number; w: number }> = [];
@@ -44,7 +44,7 @@ export function simulateWalk(
       if (j === cur) continue;
       if (degree[j] >= 4 || degree[cur] >= 4) continue;
       if (adj[cur].includes(j)) continue;
-      if (nodeVisits[j] >= 2) continue;
+      if (nodeVisits[j] >= 3) continue;
       const d = Math.hypot(points[cur].x - points[j].x, points[cur].y - points[j].y);
       newCandidates.push({ id: j, w: 1 / Math.max(d, 0.05) });
     }

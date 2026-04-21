@@ -20,7 +20,7 @@ describe('simulateWalk', () => {
     expect(walk.steps.length).toBeLessThanOrEqual(15);
     expect(walk.steps.length).toBeGreaterThan(0);
   });
-  it('caps node and edge visits at 2', () => {
+  it('caps node and edge visits at 3', () => {
     const pts = placeNodes(createRng('cap'), 8);
     const walk = simulateWalk(createRng('cap2'), pts, 30);
     const nodeVisits = new Array(pts.length).fill(0);
@@ -30,7 +30,7 @@ describe('simulateWalk', () => {
       nodeVisits[s.to]++;
       edgeVisits.set(s.edgeKey, (edgeVisits.get(s.edgeKey) ?? 0) + 1);
     }
-    for (const v of nodeVisits) expect(v).toBeLessThanOrEqual(2);
-    for (const v of edgeVisits.values()) expect(v).toBeLessThanOrEqual(2);
+    for (const v of nodeVisits) expect(v).toBeLessThanOrEqual(3);
+    for (const v of edgeVisits.values()) expect(v).toBeLessThanOrEqual(3);
   });
 });
